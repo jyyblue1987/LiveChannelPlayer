@@ -91,6 +91,9 @@ public class PlayerActivity extends Activity {
 	boolean checkerStarted = false;
 
 	int selectedCategory = 0;
+	
+	VideoView m_VideoView;
+	int 	channelDirection = -1;
 
 	String M3Uurl;
 	String thumbnailUrlPrefix = "http://logo.albiptv.ch/";
@@ -208,7 +211,21 @@ public class PlayerActivity extends Activity {
 			try {
 				String text = channelNumber.getText().toString();
 				int currentChannel = Integer.parseInt(text);
-				currentChannel--;
+				currentChannel += channelDirection;
+				
+				int count = 0;
+				
+				if (GRID_VIEW) {
+					count = channelGrid.getAdapter().getCount();
+				} else {
+					count = channelList.getAdapter().getCount();					
+				}
+				
+				if( count < 1 )
+					return;
+				
+				currentChannel = currentChannel % count;
+				
 				Message msg = mHandler.obtainMessage(JUMP_TO_CHANNEL);
 				msg.arg1 = currentChannel;
 				msg.sendToTarget();
@@ -296,6 +313,8 @@ public class PlayerActivity extends Activity {
 		StandbyActivity.setKeyEventTime();
 		setupStandbyChecker();
 		checkAction();
+		
+		
 		if (!activityCreated) {
 			M3Uurl = Helper.getM3UListUrl(this);
 			parent = this;
@@ -305,9 +324,9 @@ public class PlayerActivity extends Activity {
 			}
 //			parseM3u8List();
 //			SurfaceView view = (SurfaceView) findViewById(R.id.surface);
-			VideoView view = (VideoView) findViewById(R.id.video_view);
+			m_VideoView = (VideoView) findViewById(R.id.video_view);
 			
-			player = new Player(this, view, mHandler);
+			player = new Player(this, m_VideoView, mHandler);
 			infoPanel = findViewById(R.id.info_panel);
 			errorPanel = findViewById(R.id.error_panel);
 			jumpToChannelView = findViewById(R.id.jump_to_chanel_panel);
@@ -322,6 +341,7 @@ public class PlayerActivity extends Activity {
 					StandbyActivity.setKeyEventTime();
 					switch (keyCode) {
 					case KeyEvent.KEYCODE_DPAD_CENTER:
+						channelDirection = -1;
 						mHandler.post(JumpToChannel);
 						return true;
 
@@ -329,12 +349,22 @@ public class PlayerActivity extends Activity {
 						mHandler.obtainMessage(CANEL_JUMP_TO_CHANNEL).sendToTarget();
 						return true;
 
+					case KeyEvent.KEYCODE_MEDIA_NEXT:
+						channelDirection = 1;
+						mHandler.post(JumpToChannel);
+						return true;
+					case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+						channelDirection = -1;
+						mHandler.post(JumpToChannel);
+						return true;
+						
 					default:
 						Log.i(TAG, "Unhandled key event : " + keyCode + " for jumpToChannel view !!!");
 					}
 					return false;
 				}
 			});
+			
 			// tDownloader = new ThumbnailDownloader(this, mHandler);
 			// tDownloader.start();
 
@@ -1037,6 +1067,9 @@ public class PlayerActivity extends Activity {
 	}
 
 	private void playLastKnownChannel() {
+		int x = KeyEvent.KEYCODE_MEDIA_NEXT;
+		int y = KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+		
 		AbsListView chList;
 		int channel_offset = 0;
 		if (GRID_VIEW) {

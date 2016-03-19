@@ -36,7 +36,6 @@ public class Player {
 		this.view = view;
 		this.mHandler = mHandler;
 		
-		
 		MediaController controller = new MediaController(parent);
 		
 		view.setMediaController(controller);

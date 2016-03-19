@@ -121,7 +121,7 @@ public class HomeActivity extends Activity {
 		M3UParser.getM3UParser(this);
 
 		levelOneOptions.add("Live TV");
-		levelOneOptions.add("Filma");
+		levelOneOptions.add("Kinema");
 
 		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category1));
 		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category2));

@@ -102,6 +102,9 @@ public class VideoView extends SurfaceView implements
     private OnSeekCompleteListener mOnSeekCompleteListener;
     private OnInfoListener mOnInfoListener;
     private OnBufferingUpdateListener mOnBufferingUpdateListener;
+    
+    private OnRemoteControlListener mOnRemoteControlListener = null;
+    
     private int mCurrentBufferPercentage;
     private long mSeekWhenPrepared;
     private boolean mCanPause = true;
@@ -321,8 +324,8 @@ public class VideoView extends SurfaceView implements
             DebugLog.dfmt(TAG, "onVideoSizeChanged: (%dx%d)", width, height);
             mVideoWidth = mp.getVideoWidth();
             mVideoHeight = mp.getVideoHeight();
-//            mVideoWidth = mFull_width;
-//            mVideoHeight = mFull_height;
+            mVideoWidth = mFull_width;
+            mVideoHeight = mFull_height;
             mVideoSarNum = sarNum;
             mVideoSarDen = sarDen;
             if (mVideoWidth != 0 && mVideoHeight != 0)
@@ -572,10 +575,20 @@ public class VideoView extends SurfaceView implements
                     && mMediaPlayer.isPlaying()) {
                 pause();
                 mMediaController.show();
-            } else {
+            }
+            else if (keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS || keyCode == KeyEvent.KEYCODE_MEDIA_NEXT ) {
+                stopPlayback();
+                mMediaController.show();
+                
+            }
+            else {
                 toggleMediaControlsVisiblity();
             }
+            
         }
+        
+        if( mOnRemoteControlListener != null )
+        	mOnRemoteControlListener.onClickRemoteControl(keyCode, event);
 
         return super.onKeyDown(keyCode, event);
     }
@@ -683,4 +696,12 @@ public class VideoView extends SurfaceView implements
     public boolean canSeekForward() {
         return mCanSeekForward;
     }
+    
+    public void setOnRemoteControlAction(OnRemoteControlListener listener)
+    {
+    	mOnRemoteControlListener = listener;
+    }
+	public interface OnRemoteControlListener {
+		public void onClickRemoteControl(int keyCode, KeyEvent event);
+	}
 }
