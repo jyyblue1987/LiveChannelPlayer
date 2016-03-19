@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ALBiPTV</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="exit_menu">Jeni i Sigurtë që dëshironi të dilni?</string>
+    <string name="stream_error">Momentalisht nuk punon, Provoni më vonë</string>
+    <string name="vod_sub_category1">Filma Gjermanisht</string>
+    <string name="vod_sub_category2">Filma Shqip</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="cancel">JO</string>
+    <string name="ok">PO</string>
+    <string name="title_activity_dummy">DummyActivity</string>
+
+</resources>
