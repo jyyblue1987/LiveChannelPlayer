@@ -45,8 +45,9 @@ public class Player {
 			
 			@Override
 			public void onPrepared(IMediaPlayer mp) {
-				
-				
+				Log.i(TAG, "Playback started !!!");
+				mHandler.obtainMessage(PlayerActivity.VIDEO_STARTED).sendToTarget();
+				mHandler.removeCallbacks(reconnect);
 			}
 		});
 		
@@ -58,7 +59,7 @@ public class Player {
 				mHandler.removeCallbacks(reconnect);
 				mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
 				mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();
-				return false;
+				return true;
 			}
 		});
 		
