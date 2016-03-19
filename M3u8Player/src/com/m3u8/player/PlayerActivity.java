@@ -60,9 +60,13 @@ public class PlayerActivity extends Activity {
 	static final int MIN_DISTANCE = 150;
 
 	public static final int LIVE_TV_CATEGORY = 0;
-	public static final int VOD_TV_CATEGORY1 = 1;
-	public static final int VOD_TV_CATEGORY2 = 2;
-
+	public static final int RADIO_TV_CATEGORY = 1;
+	public static final int VOD_TV_CATEGORY1 = 2;
+	public static final int VOD_TV_CATEGORY2 = 3;
+	public static final int VOD_TV_CATEGORY3 = 4;
+	
+	
+	
 	public static final int DISPLAY_CHANNEL_LIST = 1;
 	public static final int LIST_READY = 2;
 	public static final int SURFACE_LAYOUT = 3;
@@ -388,11 +392,17 @@ public class PlayerActivity extends Activity {
 			if (action.equalsIgnoreCase(HomeActivity.PLAY_LIVE_TV)) {
 				selectedCategory = LIVE_TV_CATEGORY;
 			}
+			if (action.equalsIgnoreCase(HomeActivity.PLAY_RADIO_TV)) {
+				selectedCategory = RADIO_TV_CATEGORY;
+			}
 			if (action.equalsIgnoreCase(HomeActivity.PLAY_VOD_1)) {
 				selectedCategory = VOD_TV_CATEGORY1;
 			}
 			if (action.equalsIgnoreCase(HomeActivity.PLAY_VOD_2)) {
 				selectedCategory = VOD_TV_CATEGORY2;
+			}
+			if (action.equalsIgnoreCase(HomeActivity.PLAY_VOD_3)) {
+				selectedCategory = VOD_TV_CATEGORY3;
 			}
 			parseM3u8List();
 		}
@@ -452,6 +462,9 @@ public class PlayerActivity extends Activity {
 
 		case VOD_TV_CATEGORY2:
 			i.setAction(HomeActivity.PLAY_VOD_2);
+			break;
+		case VOD_TV_CATEGORY3:
+			i.setAction(HomeActivity.PLAY_VOD_3);
 			break;
 		}
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

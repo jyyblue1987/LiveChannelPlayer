@@ -145,11 +145,15 @@ public class M3UParser extends Thread {
 			for (M3UElement el : allStreams) {
 				switch (category) {
 				case PlayerActivity.LIVE_TV_CATEGORY:
-					if (!el.getName().startsWith("MOV")) {
+					if (!el.getName().startsWith("MOV") && !el.getName().startsWith("Radio")) {
 						addElementToList(result, el);
 					}
 					continue;
-
+				case PlayerActivity.RADIO_TV_CATEGORY:
+					if (el.getName().startsWith("Radio")) {
+						addElementToList(result, el);
+					}
+					continue;
 				case PlayerActivity.VOD_TV_CATEGORY1:
 					if (el.getName().startsWith("MOV Gjermanisht")) {
 						addElementToList(result, el);
@@ -158,6 +162,11 @@ public class M3UParser extends Thread {
 
 				case PlayerActivity.VOD_TV_CATEGORY2:
 					if (el.getName().startsWith("MOV Shqip")) {
+						addElementToList(result, el);
+					}
+					continue;
+				case PlayerActivity.VOD_TV_CATEGORY3:
+					if (el.getName().startsWith("MOV Kids")) {
 						addElementToList(result, el);
 					}
 					continue;

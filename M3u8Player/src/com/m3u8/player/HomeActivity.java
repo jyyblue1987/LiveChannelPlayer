@@ -40,6 +40,8 @@ public class HomeActivity extends Activity {
 	public static final String PLAY_LIVE_TV = "LIVE TV";
 	public static final String PLAY_VOD_1 = "VOD 1";
 	public static final String PLAY_VOD_2 = "VOD 2";
+	public static final String PLAY_VOD_3 = "VOD 3";
+	public static final String PLAY_RADIO_TV = "RADIO TV";
 
 	GridView menu;
 	int menuDepth = 0;
@@ -122,8 +124,10 @@ public class HomeActivity extends Activity {
 
 		levelOneOptions.add("Live TV");
 		levelOneOptions.add("Kinema");
+		levelOneOptions.add("Radio");
 
 		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category1));
+		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category2));
 		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category2));
 
 		MyGridAdapter adapter = new MyGridAdapter(this, levelOneOptions);
@@ -142,7 +146,10 @@ public class HomeActivity extends Activity {
 		if (action != null) {
 			if (action.equalsIgnoreCase(PLAY_LIVE_TV)) {
 				// do nothing
-			} else if (action.equalsIgnoreCase(PLAY_VOD_1)) {
+			} 
+			else if (action.equalsIgnoreCase(PLAY_RADIO_TV)) {
+				// do nothing
+			}else if (action.equalsIgnoreCase(PLAY_VOD_1)) {
 				// show vod menu, set selection to first category
 				showVodMenu();
 				menu.requestFocusFromTouch();
@@ -151,6 +158,11 @@ public class HomeActivity extends Activity {
 				showVodMenu();
 				menu.requestFocusFromTouch();
 				menu.setSelection(1);
+			} else if (action.equalsIgnoreCase(PLAY_VOD_3)) {
+				// show vod menu, set selection to second category
+				showVodMenu();
+				menu.requestFocusFromTouch();
+				menu.setSelection(2);
 			} else if (action.equalsIgnoreCase(StandbyActivity.STANDBY_OVER_ACTION)) {
 				reumeFromStandby();
 			}
@@ -160,13 +172,17 @@ public class HomeActivity extends Activity {
 	private String getActionForCurrrentState(int position) {
 		if (menuDepth == 0) {
 			if (position == 0) {
-				return PLAY_LIVE_TV;
-			}
+				return PLAY_LIVE_TV;			}
+			if( position == 2 )
+				return PLAY_RADIO_TV;
 		} else if (menuDepth == 1) {
 			if (position == 0) {
 				return PLAY_VOD_1;
 			} else if (position == 1) {
 				return PLAY_VOD_2;
+			}
+			else if (position == 1) {
+				return PLAY_VOD_3;
 			}
 		}
 		return null;
@@ -321,11 +337,24 @@ public class HomeActivity extends Activity {
 			TextView itemName = (TextView) elementView.findViewById(R.id.menu_item_name);
 			ImageView itemLogo = (ImageView) elementView.findViewById(R.id.menu_logo);
 			itemName.setText(name);
-			if (name.equalsIgnoreCase("Live TV")) {
-				itemLogo.setImageResource(R.drawable.tv);
-			} else {
-				itemLogo.setImageResource(R.drawable.film);
+			
+			if( menuDepth == 0 )
+			{
+				if (position == 0) 
+					itemLogo.setImageResource(R.drawable.tv);
+				
+				if( position == 1)
+					itemLogo.setImageResource(R.drawable.film);
+				
+				if( position == 2)
+					itemLogo.setImageResource(R.drawable.radio);	
 			}
+			else
+			{
+				itemLogo.setImageResource(R.drawable.film);				
+			}
+			
+			
 			return elementView;
 		}
 
