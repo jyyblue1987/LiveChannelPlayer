@@ -128,7 +128,7 @@ public class HomeActivity extends Activity {
 
 		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category1));
 		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category2));
-		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category2));
+		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category3));
 
 		MyGridAdapter adapter = new MyGridAdapter(this, levelOneOptions);
 
@@ -181,7 +181,7 @@ public class HomeActivity extends Activity {
 			} else if (position == 1) {
 				return PLAY_VOD_2;
 			}
-			else if (position == 1) {
+			else if (position == 2) {
 				return PLAY_VOD_3;
 			}
 		}
