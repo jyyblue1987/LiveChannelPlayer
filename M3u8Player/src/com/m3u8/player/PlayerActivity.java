@@ -84,7 +84,8 @@ public class PlayerActivity extends Activity {
 	static final int INFO_PANEL_SHOW_PERIOD = 3000;
 	static final int JUMP_TO_CHANNEL_TIMEOUT = 5000;
 
-	static final String SHARED_PREFFERENCE_CHANNEL_POSITION_KEY = "PlayingChannelPosition";
+//	static final String SHARED_PREFFERENCE_CHANNEL_POSITION_KEY = "PlayingChannelPosition";
+	static final String SHARED_PREFFERENCE_CHANNEL_NAME_KEY = "PlayingChannelName";
 	static final String CURRENT_TIME_KEY = "currentTime";
 
 	static final boolean GRID_VIEW = true;
@@ -1013,6 +1014,26 @@ public class PlayerActivity extends Activity {
 			channelList.setOnTouchListener(channelListTouchListener);
 			channelList.setOnKeyListener(channelComponentKeyListener);
 			channelList.setVisibility(View.VISIBLE);
+			
+			SharedPreferences pref = getSharedPreferences(TAG, MODE_PRIVATE);
+			String lastKnownChannelName = pref.getString(SHARED_PREFFERENCE_CHANNEL_NAME_KEY, "");
+			
+			int lastKnownChannelPosition = 0;
+			for(int i = 0; i < m3uList.size(); i++ )
+			{
+				M3UElement item = m3uList.get(i);
+				if( item == null )
+					continue;
+				
+				if( lastKnownChannelName.equals( selectedCategory + "_" +  item.getName() ) )
+				{
+					lastKnownChannelPosition = i;
+					break;
+				}
+			}
+			
+			channelList.setSelection(lastKnownChannelPosition);
+			
 			channelList.requestFocus();
 		}
 	}
@@ -1026,6 +1047,26 @@ public class PlayerActivity extends Activity {
 			channelGrid.setOnItemClickListener(channelClickListener);
 			channelGrid.setOnTouchListener(channelListTouchListener);
 			channelGrid.setOnKeyListener(channelComponentKeyListener);
+			
+			SharedPreferences pref = getSharedPreferences(TAG, MODE_PRIVATE);
+			String lastKnownChannelName = pref.getString(SHARED_PREFFERENCE_CHANNEL_NAME_KEY, "");
+			
+			int lastKnownChannelPosition = 0;
+			for(int i = 0; i < m3uList.size(); i++ )
+			{
+				M3UElement item = m3uList.get(i);
+				if( item == null )
+					continue;
+				
+				if( lastKnownChannelName.equals( selectedCategory + "_" +  item.getName() ) )
+				{
+					lastKnownChannelPosition = i;
+					break;
+				}
+			}
+			
+			channelGrid.setSelection(lastKnownChannelPosition);
+			
 			android.view.ViewGroup.LayoutParams lp = channelGrid.getLayoutParams();
 			Display display = getWindowManager().getDefaultDisplay();
 			lp.width = display.getWidth() / 10 * 8;
@@ -1076,12 +1117,14 @@ public class PlayerActivity extends Activity {
 	}
 
 	private void playStream(int position, M3UElement element) {
-		if (selectedCategory == LIVE_TV_CATEGORY) {
+//		if (selectedCategory == LIVE_TV_CATEGORY) {
 			// save previously played live channel
 			SharedPreferences.Editor editor = getSharedPreferences(TAG, MODE_PRIVATE).edit();
-			editor.putInt(SHARED_PREFFERENCE_CHANNEL_POSITION_KEY, position);
+//			editor.putInt(SHARED_PREFFERENCE_CHANNEL_POSITION_KEY, position);
+			editor.putString(SHARED_PREFFERENCE_CHANNEL_NAME_KEY, selectedCategory + "_" +  element.getName());
+			
 			editor.commit();
-		}
+//		}
 		ImageView playingChannelLogo = (ImageView) findViewById(R.id.playing_channel_logo);
 		TextView playingChannelName = (TextView) findViewById(R.id.playing_channel_label);
 		String logoName = element.getName().toLowerCase().replace(" ", "_") + ".png";
@@ -1096,25 +1139,40 @@ public class PlayerActivity extends Activity {
 		int y = KeyEvent.KEYCODE_MEDIA_PREVIOUS;
 		
 		AbsListView chList;
-		int channel_offset = 0;
+//		int channel_offset = 0;
 		if (GRID_VIEW) {
 			chList = channelGrid;
 		} else {
 			chList = channelList;
 			MyArrayAdapter adapter = (MyArrayAdapter) chList.getAdapter();
-			channel_offset = adapter.getActualCount() * 100000;
+//			channel_offset = adapter.getActualCount() * 100000;
 		}
 		SharedPreferences pref = getSharedPreferences(TAG, MODE_PRIVATE);
-		int lastKnownChannelPosition = pref.getInt(SHARED_PREFFERENCE_CHANNEL_POSITION_KEY, -1);
+//		int lastKnownChannelPosition = pref.getInt(SHARED_PREFFERENCE_CHANNEL_POSITION_KEY, -1);
+		String lastKnownChannelName = pref.getString(SHARED_PREFFERENCE_CHANNEL_NAME_KEY, "");
+		
+		int lastKnownChannelPosition = 0;
+		for(int i = 0; i < chList.getCount(); i++ )
+		{
+			M3UElement item = (M3UElement)chList.getAdapter().getItem(i);
+			if( item == null )
+				continue;
+			
+			if( lastKnownChannelName.equals( selectedCategory + "_" +  item.getName() ) )
+			{
+				lastKnownChannelPosition = i;
+				break;
+			}
+		}
 
 		if (lastKnownChannelPosition < 0 || lastKnownChannelPosition > chList.getCount()) {
 			Log.i(TAG, "Last played channel unknown !!!");
 			chList.requestFocusFromTouch();
-			chList.setSelection(channel_offset);
+			chList.setSelection(0);
 			return;
 		}
 		// channelList.setItemChecked(lastKnownChannelPosition, true);
-		lastKnownChannelPosition = lastKnownChannelPosition + channel_offset;
+//		lastKnownChannelPosition = lastKnownChannelPosition;
 		chList.requestFocusFromTouch();
 		chList.setSelection(lastKnownChannelPosition);
 		chList.performItemClick(chList.getAdapter().getView(lastKnownChannelPosition, null, null),
