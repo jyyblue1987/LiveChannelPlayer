@@ -264,7 +264,7 @@ public class PlayerActivity extends Activity {
 		public boolean onKey(View v, int keyCode, KeyEvent event) {
 			StandbyActivity.setKeyEventTime();
 			if (keyCode == KeyEvent.KEYCODE_BACK) {
-				if (selectedCategory != LIVE_TV_CATEGORY) {
+				if (selectedCategory == LIVE_TV_CATEGORY ) {
 					backToHomeMenu();
 					return true;
 				}
@@ -424,7 +424,17 @@ public class PlayerActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		backToHomeMenu();
+		if ((channelList != null && channelList.getVisibility() == View.VISIBLE)
+				|| (channelGrid != null && gridPanel.getVisibility() == View.VISIBLE)) {
+			if (GRID_VIEW) {
+				hideGridView();
+			} else {
+				hideChannelList();
+			}
+		} else {
+			backToHomeMenu();
+		}
+		
 	}
 
 	@Override
@@ -455,7 +465,9 @@ public class PlayerActivity extends Activity {
 		case LIVE_TV_CATEGORY:
 			i.setAction(HomeActivity.PLAY_LIVE_TV);
 			break;
-
+		case RADIO_TV_CATEGORY:
+			i.setAction(HomeActivity.PLAY_LIVE_TV);
+			break;
 		case VOD_TV_CATEGORY1:
 			i.setAction(HomeActivity.PLAY_VOD_1);
 			break;

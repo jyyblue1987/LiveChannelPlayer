@@ -159,7 +159,7 @@ public class HomeActivity extends Activity {
 				menu.requestFocusFromTouch();
 				menu.setSelection(1);
 			} else if (action.equalsIgnoreCase(PLAY_VOD_3)) {
-				// show vod menu, set selection to second category
+				// show vod menu, set selection to third category
 				showVodMenu();
 				menu.requestFocusFromTouch();
 				menu.setSelection(2);
