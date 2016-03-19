@@ -1,7 +1,5 @@
 package com.m3u8.player;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,15 +7,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.m3u8.player.M3UParser.M3UElement;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
@@ -33,9 +22,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -44,7 +30,6 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
@@ -66,7 +51,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+import tv.danmaku.ijk.media.widget.VideoView;
 
 public class PlayerActivity extends Activity {
 
@@ -319,7 +304,9 @@ public class PlayerActivity extends Activity {
 				mHandler.obtainMessage(WAITING_FOR_NETWORK_CONNECTION).sendToTarget();
 			}
 //			parseM3u8List();
-			SurfaceView view = (SurfaceView) findViewById(R.id.surface);
+//			SurfaceView view = (SurfaceView) findViewById(R.id.surface);
+			VideoView view = (VideoView) findViewById(R.id.video_view);
+			
 			player = new Player(this, view, mHandler);
 			infoPanel = findViewById(R.id.info_panel);
 			errorPanel = findViewById(R.id.error_panel);

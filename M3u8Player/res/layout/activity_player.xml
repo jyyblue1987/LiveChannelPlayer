@@ -5,11 +5,11 @@
     android:background="#000000"
     tools:context="com.m3u8.player.PlayerActivity" >
 
-    <SurfaceView
-        android:id="@+id/surface"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true" />
+    <tv.danmaku.ijk.media.widget.VideoView
+        android:id="@+id/video_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center" />
 
     <ListView
         android:id="@+id/channel_list"

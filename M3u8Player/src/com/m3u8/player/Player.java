@@ -1,21 +1,15 @@
 package com.m3u8.player;
 
-import java.util.ArrayList;
-
-import org.videolan.libvlc.IVLCVout;
-import org.videolan.libvlc.MediaPlayer.Event;
-import org.videolan.libvlc.MediaPlayer.EventListener;
-import org.videolan.libvlc.media.MediaPlayer;
-import org.videolan.libvlc.media.MediaPlayer.OnErrorListener;
-import org.videolan.libvlc.media.MediaPlayer.OnInfoListener;
-
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-import android.view.SurfaceView;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IMediaPlayer.OnErrorListener;
+import tv.danmaku.ijk.media.player.IMediaPlayer.OnPreparedListener;
+import tv.danmaku.ijk.media.widget.MediaController;
+import tv.danmaku.ijk.media.widget.VideoView;
 
-public class Player implements IVLCVout.Callback {
+public class Player {
 	
 	static String TAG = "Player";
 	
@@ -23,8 +17,8 @@ public class Player implements IVLCVout.Callback {
 
 	PlayerActivity parent;
 	Handler mHandler;
-	SurfaceView view;
-	MediaPlayer player;
+	VideoView view;
+	MediaController player;
 	String current_stream;
 	int mVideoWidth;
 	int mVideoHeight, mVideoVisibleHeight, mVideoVisibleWidth, mSarNum, mSarDen;
@@ -37,48 +31,68 @@ public class Player implements IVLCVout.Callback {
 		}
 	};
 	
-	public Player(PlayerActivity parent, SurfaceView view, final Handler mHandler) {
+	public Player(PlayerActivity parent, VideoView view, final Handler mHandler) {
 		this.parent = parent;
 		this.view = view;
 		this.mHandler = mHandler;
 		
-		ArrayList<String> options = new ArrayList<String>();
-		options.add("-vvv");
-		player = new MediaPlayer(options);
-
-		IVLCVout vout = player.getVout();
-		vout.addCallback(this);
-		vout.setVideoView(view);
-		vout.attachViews();
-		view.getKeepScreenOn();
 		
-		player.setEventListener(new EventListener() {
+		MediaController controller = new MediaController(parent);
+		
+		view.setMediaController(controller);
+		
+		view.setOnPreparedListener(new OnPreparedListener() {
+			
 			@Override
-			public void onEvent(Event event) {
-				// TODO Auto-generated method stub
-				switch (event.type) {
-				case Event.EndReached:
-				case Event.EncounteredError:
-					Log.i(TAG, "Error on stream, reconnect in 3 seconds !!!");
-					mHandler.removeCallbacks(reconnect);
-					mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
-					mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();
-					break;
-					
-				case Event.Playing:
-					Log.i(TAG, "Playback started !!!");
-					mHandler.obtainMessage(PlayerActivity.VIDEO_STARTED).sendToTarget();
-					mHandler.removeCallbacks(reconnect);
-					
-				default:
-//					Log.i(TAG, "Unhandled event of type : " + event.type);
-				}
+			public void onPrepared(IMediaPlayer mp) {
+				
+				
 			}
 		});
+		
+		view.setOnErrorListener(new OnErrorListener() {
+			
+			@Override
+			public boolean onError(IMediaPlayer mp, int what, int extra) {
+				Log.i(TAG, "Error on stream, reconnect in 3 seconds !!!");
+				mHandler.removeCallbacks(reconnect);
+				mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
+				mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();
+				return false;
+			}
+		});
+		
+		
+//		controller.startActionMode(callback)
+		
+	
+//		player.setEventListener(new EventListener() {
+//			@Override
+//			public void onEvent(Event event) {
+//				// TODO Auto-generated method stub
+//				switch (event.type) {
+//				case Event.EndReached:
+//				case Event.EncounteredError:
+//					Log.i(TAG, "Error on stream, reconnect in 3 seconds !!!");
+//					mHandler.removeCallbacks(reconnect);
+//					mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
+//					mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();
+//					break;
+//					
+//				case Event.Playing:
+//					Log.i(TAG, "Playback started !!!");
+//					mHandler.obtainMessage(PlayerActivity.VIDEO_STARTED).sendToTarget();
+//					mHandler.removeCallbacks(reconnect);
+//					
+//				default:
+////					Log.i(TAG, "Unhandled event of type : " + event.type);
+//				}
+//			}
+//		});
 	}
 	
 	public boolean isPlaying() {
-		return player.isPlaying();
+		return view.isPlaying();
 	}
 	
 	public String getCurrentStream() {
@@ -91,12 +105,14 @@ public class Player implements IVLCVout.Callback {
 	}
 	
 	public void play(String url) {
-		player.stop();
+		view.stopPlayback();
 		Log.w(TAG, "Playing : " + url);
 		Uri uri = Uri.parse(url);
 		try {
-			player.setDataSource(parent, uri);
-			player.start();
+			view.setVideoPath(url);
+			view.requestFocus();
+			view.start();
+			
 			current_stream = url;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,8 +120,8 @@ public class Player implements IVLCVout.Callback {
 	}
 	
 	public void stop() {
-		if (player != null && player.isPlaying()) {
-			player.stop();
+		if (view != null && view.isPlaying()) {
+			view.stopPlayback();
 		}
 	}
 	
@@ -116,13 +132,13 @@ public class Player implements IVLCVout.Callback {
 	public void volumeUp() {
 		volume ++;
 		Log.i(TAG, "Setting volume to : " + volume);
-		player.setVolume(volume, volume);
+//		player.setVolume(volume, volume);
 	}
 	
 	public void volumeDown() {
 		volume --;
 		Log.i(TAG, "Setting volume to : " + volume);
-		player.setVolume(volume, volume);
+//		player.setVolume(volume, volume);
 	}
 
 	public void setSize(int width, int height) {
@@ -167,35 +183,35 @@ public class Player implements IVLCVout.Callback {
 		
 	}
 
-	@Override
-	public void onNewLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum,
-			int sarDen) {
-		Log.e(TAG, "setSurfaceLayout called !!!");
-		if (width * height == 0)
-			return;
-		// store video size
-		mVideoHeight = height;
-		mVideoWidth = width;
-		mVideoVisibleHeight = visibleHeight;
-		mVideoVisibleWidth = visibleWidth;
-		mSarNum = sarNum;
-		mSarDen = sarDen;
-		Message msg = mHandler.obtainMessage(PlayerActivity.SURFACE_LAYOUT);
-		msg.arg1 = width;
-		msg.arg2 = height;
-		mHandler.sendMessage(msg);
-	}
-
-	@Override
-	public void onSurfacesCreated(IVLCVout vlcVout) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onSurfacesDestroyed(IVLCVout vlcVout) {
-		// TODO Auto-generated method stub
-	}
+//	@Override
+//	public void onNewLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum,
+//			int sarDen) {
+//		Log.e(TAG, "setSurfaceLayout called !!!");
+//		if (width * height == 0)
+//			return;
+//		// store video size
+//		mVideoHeight = height;
+//		mVideoWidth = width;
+//		mVideoVisibleHeight = visibleHeight;
+//		mVideoVisibleWidth = visibleWidth;
+//		mSarNum = sarNum;
+//		mSarDen = sarDen;
+//		Message msg = mHandler.obtainMessage(PlayerActivity.SURFACE_LAYOUT);
+//		msg.arg1 = width;
+//		msg.arg2 = height;
+//		mHandler.sendMessage(msg);
+//	}
+//
+//	@Override
+//	public void onSurfacesCreated(IVLCVout vlcVout) {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	@Override
+//	public void onSurfacesDestroyed(IVLCVout vlcVout) {
+//		// TODO Auto-generated method stub
+//	}
 
 
 }
