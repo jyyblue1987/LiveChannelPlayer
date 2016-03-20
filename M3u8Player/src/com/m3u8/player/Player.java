@@ -24,6 +24,8 @@ public class Player {
 	int mVideoHeight, mVideoVisibleHeight, mVideoVisibleWidth, mSarNum, mSarDen;
 	int volume = 50;
 	
+	MediaController controller = null;
+	
 	Runnable reconnect = new Runnable() {
 		@Override
 		public void run() {
@@ -31,12 +33,22 @@ public class Player {
 		}
 	};
 	
+	public void showMediaController()
+	{
+		controller.show();
+	}
+	
+	public void hideMediaController()
+	{
+		controller.hide();
+	}
+	
 	public Player(PlayerActivity parent, VideoView view, final Handler mHandler) {
 		this.parent = parent;
 		this.view = view;
 		this.mHandler = mHandler;
 		
-		MediaController controller = new MediaController(parent);
+		controller = new MediaController(parent);
 		
 		view.setMediaController(controller);
 		

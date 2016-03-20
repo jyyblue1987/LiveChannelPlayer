@@ -1,8 +1,6 @@
 package com.m3u8.player;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -15,8 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -24,7 +20,6 @@ import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -32,7 +27,6 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class HomeActivity extends Activity {
 
@@ -54,6 +48,7 @@ public class HomeActivity extends Activity {
 	ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
 
 	boolean checkerStarted = false;
+	int		m_nSelectNum = 0;
 
 	ScheduledFuture standbyCheckerTask;
 
@@ -142,25 +137,35 @@ public class HomeActivity extends Activity {
 		String action = getIntent().getAction();
 
 		mHandler = new Handler();
-
+		
+		m_nSelectNum = 0;
+		menu.setSelection(0);
 		if (action != null) {
 			if (action.equalsIgnoreCase(PLAY_LIVE_TV)) {
 				// do nothing
+				m_nSelectNum = 0;
+				menu.setSelection(0);
 			} 
 			else if (action.equalsIgnoreCase(PLAY_RADIO_TV)) {
 				// do nothing
+				m_nSelectNum = 2;
+				menu.setSelection(2);
 			}else if (action.equalsIgnoreCase(PLAY_VOD_1)) {
 				// show vod menu, set selection to first category
 				showVodMenu();
+				m_nSelectNum = 0;
+				menu.setSelection(0);				
 				menu.requestFocusFromTouch();
 			} else if (action.equalsIgnoreCase(PLAY_VOD_2)) {
 				// show vod menu, set selection to second category
 				showVodMenu();
+				m_nSelectNum = 1;
 				menu.requestFocusFromTouch();
 				menu.setSelection(1);
 			} else if (action.equalsIgnoreCase(PLAY_VOD_3)) {
 				// show vod menu, set selection to third category
 				showVodMenu();
+				m_nSelectNum = 2;
 				menu.requestFocusFromTouch();
 				menu.setSelection(2);
 			} else if (action.equalsIgnoreCase(StandbyActivity.STANDBY_OVER_ACTION)) {
@@ -354,6 +359,10 @@ public class HomeActivity extends Activity {
 				itemLogo.setImageResource(R.drawable.film);				
 			}
 			
+			if( position == m_nSelectNum  )
+				elementView.findViewById(R.id.lay_menu_item).setBackgroundResource(R.drawable.menu_selected);
+			else
+				elementView.findViewById(R.id.lay_menu_item).setBackgroundResource(R.drawable.menu_normal);
 			
 			return elementView;
 		}

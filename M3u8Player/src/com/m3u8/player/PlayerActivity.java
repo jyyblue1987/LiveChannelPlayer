@@ -3,6 +3,8 @@ package com.m3u8.player;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -115,11 +117,29 @@ public class PlayerActivity extends Activity {
 	ImageLoader iLoader;
 	ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
 	ScheduledFuture standbyCheckerTask;
+	
+	TextView		m_txtState = null;
 
 	ArrayList<Integer> keySequence = new ArrayList<Integer>();
 
 	private float touchEventX1, touchEventX2;
+	
+	private static Timer mTimer;
+	private static UpdateDurationTask mDurationTask;
 
+    private class UpdateDurationTask extends TimerTask {
+
+        @Override
+        public void run() {
+        	runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                	updateDurationTask();
+                }
+            });
+        }
+    }
+    
 	Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -282,6 +302,44 @@ public class PlayerActivity extends Activity {
 		getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.activity_player);
 		setupTimer();
+		
+		findViewById(R.id.btn_prev_down).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				buttonState = BACKRWARD_DOWN;	
+				updateDurationTask();
+			}
+		});
+		
+		findViewById(R.id.btn_prev_up).setOnClickListener(new View.OnClickListener() {
+					
+			@Override
+			public void onClick(View v) {
+				buttonState = NONE_BOTH;	
+				updateDurationTask();
+			}
+		});
+		
+		findViewById(R.id.btn_next_down).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				buttonState = FORWARD_DOWN;	
+				updateDurationTask();
+			}
+		});
+		
+		findViewById(R.id.btn_next_up).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				buttonState = NONE_BOTH;
+				updateDurationTask();
+			}
+		});
+		
+		m_txtState = (TextView)findViewById(R.id.txt_state);
 	}
 
 	@Override
@@ -291,6 +349,10 @@ public class PlayerActivity extends Activity {
 		setupStandbyChecker();
 		checkAction();
 		
+		buttonState = NONE_BOTH;
+		mTimer = new Timer();
+        mDurationTask = new UpdateDurationTask();
+		mTimer.schedule(mDurationTask, 0, 4000);
 		
 		if (!activityCreated) {
 			M3Uurl = Helper.getM3UListUrl(this);
@@ -376,6 +438,11 @@ public class PlayerActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		
+		mDurationTask.cancel();
+		mTimer.cancel();
+		
+		
 		cancelStandbyChecker();
 		player.stop();
 
@@ -431,7 +498,7 @@ public class PlayerActivity extends Activity {
 			i.setAction(HomeActivity.PLAY_LIVE_TV);
 			break;
 		case RADIO_TV_CATEGORY:
-			i.setAction(HomeActivity.PLAY_LIVE_TV);
+			i.setAction(HomeActivity.PLAY_RADIO_TV);
 			break;
 		case VOD_TV_CATEGORY1:
 			i.setAction(HomeActivity.PLAY_VOD_1);
@@ -463,22 +530,36 @@ public class PlayerActivity extends Activity {
 			checkKeyCombination();
 		}
 		
-		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT ) {
-			onClickBackwardUp();
-		} else if( keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
-			onClickForwardUp();
+		if( keyCode != 57 )
+		{
+			buttonState = NONE_BOTH;
+			updateDurationTask();
 		}
-		
 	}
 	
 	private long previousClick = 0;
-	private void onClickBackwardPress()
+	private int  buttonState = NONE_BOTH;
+	
+	private static final int BACKRWARD_DOWN = 0;
+	private static final int FORWARD_DOWN = 1;
+	private static final int NONE_BOTH = 2;
+	
+	private void  updateDurationTask()
 	{
 		if( selectedCategory == LIVE_TV_CATEGORY )
 			return;
 		
+		if( buttonState == NONE_BOTH || m_VideoView.isInPlaybackState() == false )
+		{
+			m_txtState.setVisibility(View.GONE);
+			previousClick = 0;
+			return;
+		}
+		
 		if( previousClick == 0 )
-			previousClick = System.currentTimeMillis();
+			previousClick = System.currentTimeMillis() - 4 * 1000;		
+		
+		m_txtState.setVisibility(View.VISIBLE);
 		
 		long current = System.currentTimeMillis();
 		long gap = current - previousClick;
@@ -486,57 +567,38 @@ public class PlayerActivity extends Activity {
 		
 		long currentPos = m_VideoView.getCurrentPosition();
 		
-		currentPos -= gap * 4;
-		if( currentPos < 0 )
+		if( buttonState == BACKRWARD_DOWN )
+		{
+			m_txtState.setText("Backward 4x");
+			currentPos -= gap * 4;
+		}
+		else if( buttonState == FORWARD_DOWN )
+		{
+			m_txtState.setText("Forward 4x");
+			currentPos += gap * 4;
+		}
+		
+		if( currentPos < 0 || currentPos > m_VideoView.getDuration() )
 			currentPos = 0;
 		
 		m_VideoView.seekTo(currentPos);
-	}
+	}	
 	
-	private void onClickBackwardUp()
-	{
-		previousClick = 0;
-	}
-	
-	private void onClickForwardPress()
-	{
-		if( selectedCategory == LIVE_TV_CATEGORY )
-			return;
-		
-		if( previousClick == 0 )
-			previousClick = System.currentTimeMillis();
-		
-		long current = System.currentTimeMillis();
-		long gap = current - previousClick;
-		previousClick = current;
-		
-		long currentPos = m_VideoView.getCurrentPosition();
-		
-		currentPos += gap * 4;
-		long duration = m_VideoView.getDuration();
-		
-		if( currentPos > duration )
-			currentPos = duration;
-		
-		m_VideoView.seekTo(currentPos);
-	}
-	
-	private void onClickForwardUp()
-	{
-		previousClick = 0;
-	}
-
 	private boolean handleKeyEvent(int keyCode, KeyEvent event) {
 		StandbyActivity.setKeyEventTime();
 		Log.i(TAG, "Key with code : " + keyCode + " , pressed !!!");
+		if( keyCode != 57 )
+			buttonState = NONE_BOTH;
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_DPAD_LEFT:
 			checkKeyCombination();
-			onClickBackwardPress();
+			buttonState = BACKRWARD_DOWN;
+			updateDurationTask();
 			break;
 
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
-			onClickForwardPress();
+			buttonState = FORWARD_DOWN;
+			updateDurationTask();
 			break;
 
 		case KeyEvent.KEYCODE_ENTER:

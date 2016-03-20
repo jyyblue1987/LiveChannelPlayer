@@ -10,7 +10,49 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="center" />
-
+	<Button
+	    android:id="@+id/btn_prev_down"
+	    android:layout_width="100dip"
+	    android:layout_height="50dip"
+	    android:visibility="gone"
+	    android:text="Prev Press" 
+	    />
+	<Button
+	    android:id="@+id/btn_prev_up"
+	    android:layout_width="100dip"
+	    android:layout_height="50dip"
+	    android:layout_below="@id/btn_prev_down"
+	    android:visibility="gone"
+	    android:text="Prev Up" 
+	    />
+	<Button
+	    android:id="@+id/btn_next_down"
+	    android:layout_width="100dip"
+	    android:layout_height="50dip"
+	    android:layout_below="@id/btn_prev_up"
+	    android:visibility="gone"
+	    android:text="Next Down" 
+	    />
+	<Button
+	    android:id="@+id/btn_next_up"
+	    android:layout_width="100dip"
+	    android:layout_height="50dip"	    
+	    android:layout_below="@id/btn_next_down"
+	    android:visibility="gone"
+	    android:text="Next Down" 
+	    />
+	
+	<TextView
+	    android:id="@+id/txt_state"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"	  
+	    android:layout_marginLeft="15dip"        
+        android:layout_marginTop="15dip"
+        android:visibility="gone"  
+	    android:text="4x"	    
+	    android:textSize="30sp"
+	    android:textColor="#FFFFFF" 
+	    />
     <ListView
         android:id="@+id/channel_list"
         android:layout_width="wrap_content"

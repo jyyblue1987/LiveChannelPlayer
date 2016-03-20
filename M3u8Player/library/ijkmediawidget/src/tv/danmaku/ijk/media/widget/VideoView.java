@@ -683,7 +683,7 @@ public class VideoView extends SurfaceView implements
         return mVideoHeight;
     }
 
-    protected boolean isInPlaybackState() {
+    public boolean isInPlaybackState() {
         return (mMediaPlayer != null && mCurrentState != STATE_ERROR
                 && mCurrentState != STATE_IDLE && mCurrentState != STATE_PREPARING);
     }
