@@ -38,6 +38,8 @@ public class HomeActivity extends Activity {
 	public static final String PLAY_RADIO_TV = "RADIO TV";
 
 	GridView menu;
+	MyGridAdapter adapter;
+	
 	int menuDepth = 0;
 	ArrayList<String> levelOneOptions = new ArrayList<String>();
 	ArrayList<String> levelTwoOptions = new ArrayList<String>();
@@ -72,9 +74,25 @@ public class HomeActivity extends Activity {
 		public boolean onKey(View v, int keyCode, KeyEvent event) {
 			StandbyActivity.setKeyEventTime();
 			switch (keyCode) {
-			case KeyEvent.KEYCODE_DPAD_DOWN:
+			case KeyEvent.KEYCODE_DPAD_DOWN:				
 			case KeyEvent.KEYCODE_DPAD_UP:
 				return true;
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				if( event.getAction() == KeyEvent.ACTION_UP)
+				{
+					m_nSelectNum = (m_nSelectNum - 1) % menu.getCount();
+					menu.setSelection(m_nSelectNum);
+					adapter.notifyDataSetChanged();
+				}
+				return false;
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				if( event.getAction() == KeyEvent.ACTION_UP)
+				{
+					m_nSelectNum = (m_nSelectNum + 1) % menu.getCount();
+					menu.setSelection(m_nSelectNum);
+					adapter.notifyDataSetChanged();
+				}
+				return false;
 
 			case KeyEvent.KEYCODE_BACK:
 				if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -125,7 +143,7 @@ public class HomeActivity extends Activity {
 		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category2));
 		levelTwoOptions.add(getResources().getString(R.string.vod_sub_category3));
 
-		MyGridAdapter adapter = new MyGridAdapter(this, levelOneOptions);
+		adapter = new MyGridAdapter(this, levelOneOptions);
 
 		menu = (GridView) findViewById(R.id.menu);
 		menu.setAdapter(adapter);
@@ -239,14 +257,14 @@ public class HomeActivity extends Activity {
 	}
 
 	private void showVodMenu() {
-		MyGridAdapter adapter = (MyGridAdapter) menu.getAdapter();
+		adapter = (MyGridAdapter) menu.getAdapter();
 		adapter.setData(levelTwoOptions);
 		menu.invalidateViews();
 		menuDepth = 1;
 	}
 
 	private void showFirstMenu() {
-		MyGridAdapter adapter = (MyGridAdapter) menu.getAdapter();
+		adapter = (MyGridAdapter) menu.getAdapter();
 		adapter.setData(levelOneOptions);
 		menu.invalidateViews();
 		menuDepth = 0;

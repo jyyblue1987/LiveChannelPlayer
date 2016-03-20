@@ -20,5 +20,13 @@
         android:listSelector="@drawable/menu_selector"
         android:stretchMode="columnWidth"
         android:verticalSpacing="2dp" />
-
+	<ImageView
+	    android:id="@+id/img_logo"
+	    android:layout_width="100dip"
+	    android:layout_height="50dip"
+	    android:layout_centerHorizontal="true"
+	    android:layout_alignParentBottom="true"
+	    android:layout_marginBottom="20dip"
+	    android:background="@drawable/logo"
+	    />
 </RelativeLayout>
