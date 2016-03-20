@@ -250,21 +250,8 @@ public class PlayerActivity extends Activity {
 		public boolean onKey(View v, int keyCode, KeyEvent event) {
 			StandbyActivity.setKeyEventTime();
 			if (keyCode == KeyEvent.KEYCODE_BACK) {
-				if (selectedCategory == LIVE_TV_CATEGORY ) {
-					backToHomeMenu();
-					return true;
-				}
-				if ((channelList != null && channelList.getVisibility() == View.VISIBLE)
-						|| (channelGrid != null && gridPanel.getVisibility() == View.VISIBLE)) {
-					if (GRID_VIEW) {
-						hideGridView();
-					} else {
-						hideChannelList();
-					}
-					return true;
-				} else {
-					return false;
-				}
+				onBackPressed();
+				return true;
 			}
 			if (GRID_VIEW) {
 				int columns = channelGrid.getNumColumns();
@@ -485,6 +472,7 @@ public class PlayerActivity extends Activity {
 			break;
 
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
+			checkKeyCombination();
 			break;
 
 		case KeyEvent.KEYCODE_ENTER:
@@ -558,7 +546,7 @@ public class PlayerActivity extends Activity {
 			break;
 
 		case KeyEvent.KEYCODE_BACK:
-			backToHomeMenu();
+			onBackPressed();
 			return true;
 
 		default:
