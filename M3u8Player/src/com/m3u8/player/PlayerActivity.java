@@ -458,9 +458,72 @@ public class PlayerActivity extends Activity {
 		} else {
 			keySequence.clear();
 		}
+		
 		if (keySequence.size() >= 5) {
 			checkKeyCombination();
 		}
+		
+		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT ) {
+			onClickBackwardUp();
+		} else if( keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
+			onClickForwardUp();
+		}
+		
+	}
+	
+	private long previousClick = 0;
+	private void onClickBackwardPress()
+	{
+		if( selectedCategory == LIVE_TV_CATEGORY )
+			return;
+		
+		if( previousClick == 0 )
+			previousClick = System.currentTimeMillis();
+		
+		long current = System.currentTimeMillis();
+		long gap = current - previousClick;
+		previousClick = current;
+		
+		long currentPos = m_VideoView.getCurrentPosition();
+		
+		currentPos -= gap * 4;
+		if( currentPos < 0 )
+			currentPos = 0;
+		
+		m_VideoView.seekTo(currentPos);
+	}
+	
+	private void onClickBackwardUp()
+	{
+		previousClick = 0;
+	}
+	
+	private void onClickForwardPress()
+	{
+		if( selectedCategory == LIVE_TV_CATEGORY )
+			return;
+		
+		if( previousClick == 0 )
+			previousClick = System.currentTimeMillis();
+		
+		long current = System.currentTimeMillis();
+		long gap = current - previousClick;
+		previousClick = current;
+		
+		long currentPos = m_VideoView.getCurrentPosition();
+		
+		currentPos += gap * 4;
+		long duration = m_VideoView.getDuration();
+		
+		if( currentPos > duration )
+			currentPos = duration;
+		
+		m_VideoView.seekTo(currentPos);
+	}
+	
+	private void onClickForwardUp()
+	{
+		previousClick = 0;
 	}
 
 	private boolean handleKeyEvent(int keyCode, KeyEvent event) {
@@ -469,10 +532,11 @@ public class PlayerActivity extends Activity {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_DPAD_LEFT:
 			checkKeyCombination();
+			onClickBackwardPress();
 			break;
 
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
-			checkKeyCombination();
+			onClickForwardPress();
 			break;
 
 		case KeyEvent.KEYCODE_ENTER:
