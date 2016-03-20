@@ -98,7 +98,6 @@ public class PlayerActivity extends Activity {
 	int selectedCategory = 0;
 	
 	VideoView m_VideoView;
-	int 	channelDirection = -1;
 
 	String M3Uurl;
 	String thumbnailUrlPrefix = "http://logo.albiptv.ch/";
@@ -216,21 +215,7 @@ public class PlayerActivity extends Activity {
 			try {
 				String text = channelNumber.getText().toString();
 				int currentChannel = Integer.parseInt(text);
-				currentChannel += channelDirection;
-				
-				int count = 0;
-				
-				if (GRID_VIEW) {
-					count = channelGrid.getAdapter().getCount();
-				} else {
-					count = channelList.getAdapter().getCount();					
-				}
-				
-				if( count < 1 )
-					return;
-				
-				currentChannel = currentChannel % count;
-				
+				currentChannel--;
 				Message msg = mHandler.obtainMessage(JUMP_TO_CHANNEL);
 				msg.arg1 = currentChannel;
 				msg.sendToTarget();
@@ -331,6 +316,8 @@ public class PlayerActivity extends Activity {
 //			SurfaceView view = (SurfaceView) findViewById(R.id.surface);
 			m_VideoView = (VideoView) findViewById(R.id.video_view);
 			
+			m_VideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH);
+			
 			player = new Player(this, m_VideoView, mHandler);
 			infoPanel = findViewById(R.id.info_panel);
 			errorPanel = findViewById(R.id.error_panel);
@@ -345,8 +332,7 @@ public class PlayerActivity extends Activity {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					StandbyActivity.setKeyEventTime();
 					switch (keyCode) {
-					case KeyEvent.KEYCODE_DPAD_CENTER:
-						channelDirection = -1;
+					case KeyEvent.KEYCODE_DPAD_CENTER:						
 						mHandler.post(JumpToChannel);
 						return true;
 
@@ -354,15 +340,6 @@ public class PlayerActivity extends Activity {
 						mHandler.obtainMessage(CANEL_JUMP_TO_CHANNEL).sendToTarget();
 						return true;
 
-					case KeyEvent.KEYCODE_MEDIA_NEXT:
-						channelDirection = 1;
-						mHandler.post(JumpToChannel);
-						return true;
-					case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-						channelDirection = -1;
-						mHandler.post(JumpToChannel);
-						return true;
-						
 					default:
 						Log.i(TAG, "Unhandled key event : " + keyCode + " for jumpToChannel view !!!");
 					}
@@ -1171,6 +1148,9 @@ public class PlayerActivity extends Activity {
 			chList.setSelection(0);
 			return;
 		}
+		
+//		lastKnownChannelPosition = 10;
+		
 		// channelList.setItemChecked(lastKnownChannelPosition, true);
 //		lastKnownChannelPosition = lastKnownChannelPosition;
 		chList.requestFocusFromTouch();

@@ -324,8 +324,8 @@ public class VideoView extends SurfaceView implements
             DebugLog.dfmt(TAG, "onVideoSizeChanged: (%dx%d)", width, height);
             mVideoWidth = mp.getVideoWidth();
             mVideoHeight = mp.getVideoHeight();
-            mVideoWidth = mFull_width;
-            mVideoHeight = mFull_height;
+//            mVideoWidth = mFull_width;
+//            mVideoHeight = mFull_height;
             mVideoSarNum = sarNum;
             mVideoSarDen = sarDen;
             if (mVideoWidth != 0 && mVideoHeight != 0)
@@ -345,6 +345,9 @@ public class VideoView extends SurfaceView implements
                 mMediaController.setEnabled(true);
             mVideoWidth = mp.getVideoWidth();
             mVideoHeight = mp.getVideoHeight();
+            
+//            mVideoWidth = mFull_width;
+//            mVideoHeight = mFull_height;
 
             long seekToPosition = mSeekWhenPrepared;
 
