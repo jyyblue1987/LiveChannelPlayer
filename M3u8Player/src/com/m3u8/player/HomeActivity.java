@@ -27,6 +27,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import io.vov.vitamio.Vitamio;
 
 public class HomeActivity extends Activity {
 
@@ -124,6 +125,8 @@ public class HomeActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Vitamio.isInitialized(this);
+		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
 		super.onCreate(savedInstanceState);

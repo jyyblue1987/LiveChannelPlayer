@@ -5,11 +5,14 @@
     android:background="#000000"
     tools:context="com.m3u8.player.PlayerActivity" >
 
-    <tv.danmaku.ijk.media.widget.VideoView
+    
+     <io.vov.vitamio.widget.VideoView
         android:id="@+id/video_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="center" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" 
+        />
+        
 	<Button
 	    android:id="@+id/btn_prev_down"
 	    android:layout_width="100dip"

@@ -53,7 +53,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import tv.danmaku.ijk.media.widget.VideoView;
+import io.vov.vitamio.widget.MediaController;
+import io.vov.vitamio.widget.VideoView;
 
 public class PlayerActivity extends Activity {
 
@@ -342,6 +343,8 @@ public class PlayerActivity extends Activity {
 		m_txtState = (TextView)findViewById(R.id.txt_state);
 	}
 
+	MediaController controller = null;
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -365,7 +368,16 @@ public class PlayerActivity extends Activity {
 //			SurfaceView view = (SurfaceView) findViewById(R.id.surface);
 			m_VideoView = (VideoView) findViewById(R.id.video_view);
 			
-			m_VideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH);
+			m_VideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);
+			
+			if( selectedCategory != LIVE_TV_CATEGORY )
+			{
+				controller = new MediaController(parent);				
+				m_VideoView.setMediaController(controller);	
+			}
+			else 
+				controller = null;
+			
 			
 			player = new Player(this, m_VideoView, mHandler);
 			infoPanel = findViewById(R.id.info_panel);
@@ -551,10 +563,13 @@ public class PlayerActivity extends Activity {
 		
 		if( buttonState == NONE_BOTH || m_VideoView.isInPlaybackState() == false )
 		{
+			controller.hide();
 			m_txtState.setVisibility(View.GONE);
 			previousClick = 0;
 			return;
 		}
+		
+		controller.show(8000);
 		
 		if( previousClick == 0 )
 			previousClick = System.currentTimeMillis() - 4 * 1000;		
@@ -569,13 +584,13 @@ public class PlayerActivity extends Activity {
 		
 		if( buttonState == BACKRWARD_DOWN )
 		{
-			m_txtState.setText("Backward 4x");
-			currentPos -= gap * 4;
+			m_txtState.setText("Backward 8x");
+			currentPos -= gap * 8;
 		}
 		else if( buttonState == FORWARD_DOWN )
 		{
-			m_txtState.setText("Forward 4x");
-			currentPos += gap * 4;
+			m_txtState.setText("Forward 8x");
+			currentPos += gap * 8;
 		}
 		
 		if( currentPos < 0 || currentPos > m_VideoView.getDuration() )
@@ -1023,6 +1038,8 @@ public class PlayerActivity extends Activity {
 	}
 
 	private void showInfoPanel() {
+		if( controller != null )
+			controller.hide();
 		if (infoPanel.getVisibility() != View.VISIBLE) {
 			// animate info panel
 			infoPanel.startAnimation(inFromBottomAnimation());
