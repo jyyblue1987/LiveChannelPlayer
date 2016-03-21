@@ -464,6 +464,7 @@ public class PlayerActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		player.stop();
+		
 		super.onDestroy();
 	}
 

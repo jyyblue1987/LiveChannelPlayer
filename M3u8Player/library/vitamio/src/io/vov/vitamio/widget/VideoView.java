@@ -180,7 +180,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	private int mVideoHeight;
 	private float mVideoAspectRatio;
 	private int mVideoChroma = MediaPlayer.VIDEOCHROMA_RGBA;
-	private boolean mHardwareDecoder = false;
+	private boolean mHardwareDecoder = true;
 	private int mSurfaceWidth;
 	private int mSurfaceHeight;
 	private MediaController mMediaController;
