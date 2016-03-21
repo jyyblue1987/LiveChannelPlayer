@@ -367,6 +367,7 @@ public class PlayerActivity extends Activity {
 //			parseM3u8List();
 //			SurfaceView view = (SurfaceView) findViewById(R.id.surface);
 			m_VideoView = (VideoView) findViewById(R.id.video_view);
+			m_VideoView.setHardwareDecoder(true);
 			
 			m_VideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);
 			
