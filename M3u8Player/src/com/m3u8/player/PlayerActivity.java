@@ -156,8 +156,8 @@ public class PlayerActivity extends Activity {
 				} else {
 					displayChannels();
 				}
-				if (selectedCategory == LIVE_TV_CATEGORY) {
-					if (!parent.isFinishing() && !player.isPlaying() && !StandbyActivity.SHOWING) {
+				if (selectedCategory == LIVE_TV_CATEGORY) {					
+					if ( player != null && !parent.isFinishing() && !player.isPlaying() && !StandbyActivity.SHOWING) {
 //						playLastKnownChannel();
 					}
 				}
@@ -309,8 +309,9 @@ public class PlayerActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				buttonState = BACKRWARD_DOWN;	
-				updateDurationTask();
+//				buttonState = BACKRWARD_DOWN;	
+//				updateDurationTask();
+				showGridView();
 			}
 		});
 		
@@ -369,8 +370,7 @@ public class PlayerActivity extends Activity {
 //			parseM3u8List();
 //			SurfaceView view = (SurfaceView) findViewById(R.id.surface);
 			m_vitamioView = (io.vov.vitamio.widget.VideoView) findViewById(R.id.vitamio_view);
-			m_vitamioView.setHardwareDecoder(true);
-			
+			m_vitamioView.setHardwareDecoder(true);			
 			m_vitamioView.setVideoLayout(io.vov.vitamio.widget.VideoView.VIDEO_LAYOUT_STRETCH, 0);
 			
 			m_ijkView = (tv.danmaku.ijk.media.widget.VideoView) findViewById(R.id.ijk_view);
@@ -390,12 +390,7 @@ public class PlayerActivity extends Activity {
 				ijk_controller = null;
 			}
 			
-			
 			player = new Player(this, m_ijkView, mHandler);
-			if( player.getPlayerView() == 0 )			
-				m_ijkView.setVisibility(View.GONE);
-			else
-				m_vitamioView.setVisibility(View.GONE);
 			
 			infoPanel = findViewById(R.id.info_panel);
 			errorPanel = findViewById(R.id.error_panel);
@@ -581,6 +576,9 @@ public class PlayerActivity extends Activity {
 		
 		boolean state = false;
 		
+		if( player == null )
+			return;
+		
 		if( player.getPlayerView() == 0 )
 			state = m_vitamioView.isInPlaybackState();
 		else
@@ -599,12 +597,12 @@ public class PlayerActivity extends Activity {
 		}
 		
 		if( player.getPlayerView() == 0 )
-			vitamio_controller.show(8000);
+			vitamio_controller.show(10000);
 		else
-			ijk_controller.show(8000);
+			ijk_controller.show(1000);
 		
 		if( previousClick == 0 )
-			previousClick = System.currentTimeMillis() - 4 * 1000;		
+			previousClick = System.currentTimeMillis() - 8 * 1000;		
 		
 		m_txtState.setVisibility(View.VISIBLE);
 		
@@ -1293,7 +1291,30 @@ public class PlayerActivity extends Activity {
 		String thumbnailUrl = "http://logo.albiptv.ch/" + logoName;
 		iLoader.displayImage(thumbnailUrl, playingChannelLogo, defaultImageOptions);
 		playingChannelName.setText(element.getName());
-		player.play(element.getUrl());
+		
+		if( player != null )
+			player.stop();
+		
+		String url = element.getUrl();
+		
+		if( selectedCategory != LIVE_TV_CATEGORY && url.endsWith("mkv") )
+			player = new Player(this, m_vitamioView, mHandler);
+		else
+			player = new Player(this, m_ijkView, mHandler);
+		
+		if( player.getPlayerView() == 0 )			
+		{
+			m_ijkView.setVisibility(View.GONE);
+			m_vitamioView.setVisibility(View.VISIBLE);
+		}
+		else
+		{
+			m_vitamioView.setVisibility(View.GONE);
+			m_ijkView.setVisibility(View.VISIBLE);				
+		}
+		
+		
+		player.play(url);
 	}
 
 	private void playLastKnownChannel() {

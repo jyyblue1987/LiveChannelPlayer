@@ -21,9 +21,8 @@
 	<Button
 	    android:id="@+id/btn_prev_down"
 	    android:layout_width="100dip"
-	    android:layout_height="50dip"
-	    android:visibility="gone"
-	    android:text="Prev Press" 
+	    android:layout_height="50dip"	    
+	    android:text="PlayList" 
 	    />
 	<Button
 	    android:id="@+id/btn_prev_up"
