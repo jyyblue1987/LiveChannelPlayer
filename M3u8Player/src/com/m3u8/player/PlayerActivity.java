@@ -166,7 +166,6 @@ public class PlayerActivity extends Activity {
 				break;
 
 			case SURFACE_LAYOUT:
-				player.setSize(msg.arg1, msg.arg2);
 				break;
 
 			case UPDATE_TIMER:
@@ -374,6 +373,8 @@ public class PlayerActivity extends Activity {
 			
 			m_ijkView = (tv.danmaku.ijk.media.widget.VideoView) findViewById(R.id.ijk_view);
 			m_ijkView.setVideoLayout(tv.danmaku.ijk.media.widget.VideoView.VIDEO_LAYOUT_STRETCH);
+			
+			m_ijkView.setVisibility(View.GONE);
 			
 			if( selectedCategory != LIVE_TV_CATEGORY )
 			{

@@ -1,18 +1,7 @@
 package com.m3u8.player;
 
-import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
-//import tv.danmaku.ijk.media.player.IMediaPlayer;
-//import tv.danmaku.ijk.media.player.IMediaPlayer.OnErrorListener;
-//import tv.danmaku.ijk.media.player.IMediaPlayer.OnPreparedListener;
-//import tv.danmaku.ijk.media.widget.MediaController;
-//import tv.danmaku.ijk.media.widget.VideoView;
-import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.MediaPlayer.OnErrorListener;
-import io.vov.vitamio.MediaPlayer.OnPreparedListener;
-import io.vov.vitamio.widget.MediaController;
-import io.vov.vitamio.widget.VideoView;
 
 public class Player {
 	
@@ -22,14 +11,14 @@ public class Player {
 
 	PlayerActivity parent;
 	Handler mHandler;
-	VideoView view;
-	MediaController player;
+	
 	String current_stream;
-	int mVideoWidth;
-	int mVideoHeight, mVideoVisibleHeight, mVideoVisibleWidth, mSarNum, mSarDen;
 	int volume = 50;
 	
-	MediaController controller = null;
+	int m_nPlayView = 0;
+	
+	io.vov.vitamio.widget.MediaController vitamio_controller = null;
+	io.vov.vitamio.widget.VideoView vitamio_view;
 	
 	Runnable reconnect = new Runnable() {
 		@Override
@@ -40,33 +29,35 @@ public class Player {
 	
 	public void showMediaController()
 	{
-		controller.show();
+		if( m_nPlayView == 0 )
+			vitamio_controller.show();
 	}
 	
 	public void hideMediaController()
 	{
-		controller.hide();
+		if( m_nPlayView == 0 )
+			vitamio_controller.hide();
 	}
 	
-	public Player(PlayerActivity parent, VideoView view, final Handler mHandler) {
+	public Player(PlayerActivity parent, io.vov.vitamio.widget.VideoView view, final Handler mHandler) {
 		this.parent = parent;
-		this.view = view;
+		this.vitamio_view = view;
 		this.mHandler = mHandler;
 		
-		view.setOnPreparedListener(new OnPreparedListener() {
+		view.setOnPreparedListener(new io.vov.vitamio.MediaPlayer.OnPreparedListener() {
 			
 			@Override
-			public void onPrepared(MediaPlayer mp) {
+			public void onPrepared(io.vov.vitamio.MediaPlayer mp) {
 				Log.i(TAG, "Playback started !!!");
 				mHandler.obtainMessage(PlayerActivity.VIDEO_STARTED).sendToTarget();
 				mHandler.removeCallbacks(reconnect);
 			}
 		});
 		
-		view.setOnErrorListener(new OnErrorListener() {
+		view.setOnErrorListener(new io.vov.vitamio.MediaPlayer.OnErrorListener() {
 			
 			@Override
-			public boolean onError(MediaPlayer mp, int what, int extra) {
+			public boolean onError(io.vov.vitamio.MediaPlayer mp, int what, int extra) {
 				Log.i(TAG, "Error on stream, reconnect in 3 seconds !!!");
 				mHandler.removeCallbacks(reconnect);
 				mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
@@ -75,36 +66,13 @@ public class Player {
 			}
 		});
 
-//		controller.startActionMode(callback)
-		
-	
-//		player.setEventListener(new EventListener() {
-//			@Override
-//			public void onEvent(Event event) {
-//				// TODO Auto-generated method stub
-//				switch (event.type) {
-//				case Event.EndReached:
-//				case Event.EncounteredError:
-//					Log.i(TAG, "Error on stream, reconnect in 3 seconds !!!");
-//					mHandler.removeCallbacks(reconnect);
-//					mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
-//					mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();
-//					break;
-//					
-//				case Event.Playing:
-//					Log.i(TAG, "Playback started !!!");
-//					mHandler.obtainMessage(PlayerActivity.VIDEO_STARTED).sendToTarget();
-//					mHandler.removeCallbacks(reconnect);
-//					
-//				default:
-////					Log.i(TAG, "Unhandled event of type : " + event.type);
-//				}
-//			}
-//		});
 	}
 	
 	public boolean isPlaying() {
-		return view.isPlaying();
+		if( m_nPlayView == 0 )
+			return vitamio_view.isPlaying();
+		
+		return true;
 	}
 	
 	public String getCurrentStream() {
@@ -117,13 +85,17 @@ public class Player {
 	}
 	
 	public void play(String url) {
-		view.stopPlayback();
+		if( m_nPlayView == 0 )
+			vitamio_view.stopPlayback();	
 		Log.w(TAG, "Playing : " + url);
-		Uri uri = Uri.parse(url);
 		try {
-			view.setVideoPath(url);
-			view.requestFocus();
-			view.start();
+			if( m_nPlayView == 0 )
+			{
+				vitamio_view.setVideoPath(url);
+				vitamio_view.requestFocus();
+				vitamio_view.start();	
+			}
+			
 			
 			current_stream = url;
 		} catch (Exception e) {
@@ -132,9 +104,13 @@ public class Player {
 	}
 	
 	public void stop() {
-		if (view != null && view.isPlaying()) {
-			view.stopPlayback();
+		if( m_nPlayView == 0 )
+		{
+			if (vitamio_view != null && vitamio_view.isPlaying()) {
+				vitamio_view.stopPlayback();
+			}	
 		}
+		
 	}
 	
 	public void release() {
@@ -153,77 +129,5 @@ public class Player {
 //		player.setVolume(volume, volume);
 	}
 
-	public void setSize(int width, int height) {
-		Log.w(TAG, "Set size called !!!");
-		/*
-		mVideoWidth = width;
-		mVideoHeight = height;
-		if (mVideoWidth * mVideoHeight <= 1)
-			return;
-
-		int w = parent.getWindow().getDecorView().getWidth();
-		int h = parent.getWindow().getDecorView().getHeight();
-
-		// getWindow().getDecorView() doesn't always take orientation into
-		// account, we have to correct the values
-		boolean isPortrait = parent.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-		if (w > h && isPortrait || w < h && !isPortrait) {
-			int i = w;
-			w = h;
-			h = i;
-		}
-
-		float videoAR = (float) mVideoWidth / (float) mVideoHeight;
-		float screenAR = (float) w / (float) h;
-
-		if (screenAR < videoAR) {
-			h = (int) (w / videoAR);
-		} else {
-			w = (int) (h * videoAR);
-		}
-
-		// force surface buffer size
-		view.getHolder().setFixedSize(mVideoWidth, mVideoHeight);
-
-		// set display size
-		android.view.ViewGroup.LayoutParams lp = view.getLayoutParams();
-		lp.width = w;
-		lp.height = h;
-		view.setLayoutParams(lp);
-		view.invalidate();
-		*/
-		
-	}
-
-//	@Override
-//	public void onNewLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum,
-//			int sarDen) {
-//		Log.e(TAG, "setSurfaceLayout called !!!");
-//		if (width * height == 0)
-//			return;
-//		// store video size
-//		mVideoHeight = height;
-//		mVideoWidth = width;
-//		mVideoVisibleHeight = visibleHeight;
-//		mVideoVisibleWidth = visibleWidth;
-//		mSarNum = sarNum;
-//		mSarDen = sarDen;
-//		Message msg = mHandler.obtainMessage(PlayerActivity.SURFACE_LAYOUT);
-//		msg.arg1 = width;
-//		msg.arg2 = height;
-//		mHandler.sendMessage(msg);
-//	}
-//
-//	@Override
-//	public void onSurfacesCreated(IVLCVout vlcVout) {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	@Override
-//	public void onSurfacesDestroyed(IVLCVout vlcVout) {
-//		// TODO Auto-generated method stub
-//	}
-
-
+	
 }
