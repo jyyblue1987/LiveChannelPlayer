@@ -53,8 +53,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import io.vov.vitamio.widget.MediaController;
-import io.vov.vitamio.widget.VideoView;
+
 
 public class PlayerActivity extends Activity {
 
@@ -101,6 +100,7 @@ public class PlayerActivity extends Activity {
 	int selectedCategory = 0;
 	
 	io.vov.vitamio.widget.VideoView m_vitamioView;
+	tv.danmaku.ijk.media.widget.VideoView m_ijkView;
 
 	String M3Uurl;
 	String thumbnailUrlPrefix = "http://logo.albiptv.ch/";
@@ -343,7 +343,8 @@ public class PlayerActivity extends Activity {
 		m_txtState = (TextView)findViewById(R.id.txt_state);
 	}
 
-	MediaController controller = null;
+	io.vov.vitamio.widget.MediaController vitamio_controller = null;
+	tv.danmaku.ijk.media.widget.MediaController ijk_controller = null;
 	
 	@Override
 	protected void onResume() {
@@ -366,18 +367,27 @@ public class PlayerActivity extends Activity {
 			}
 //			parseM3u8List();
 //			SurfaceView view = (SurfaceView) findViewById(R.id.surface);
-			m_vitamioView = (VideoView) findViewById(R.id.vitamio_view);
+			m_vitamioView = (io.vov.vitamio.widget.VideoView) findViewById(R.id.vitamio_view);
 			m_vitamioView.setHardwareDecoder(true);
 			
-			m_vitamioView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);
+			m_vitamioView.setVideoLayout(io.vov.vitamio.widget.VideoView.VIDEO_LAYOUT_STRETCH, 0);
+			
+			m_ijkView = (tv.danmaku.ijk.media.widget.VideoView) findViewById(R.id.ijk_view);
+			m_ijkView.setVideoLayout(tv.danmaku.ijk.media.widget.VideoView.VIDEO_LAYOUT_STRETCH);
 			
 			if( selectedCategory != LIVE_TV_CATEGORY )
 			{
-				controller = new MediaController(parent);				
-				m_vitamioView.setMediaController(controller);	
+				vitamio_controller = new io.vov.vitamio.widget.MediaController(parent);				
+				m_vitamioView.setMediaController(vitamio_controller);	
+				
+				ijk_controller = new tv.danmaku.ijk.media.widget.MediaController(parent);				
+				m_ijkView.setMediaController(ijk_controller);	
 			}
 			else 
-				controller = null;
+			{
+				vitamio_controller = null;
+				ijk_controller = null;
+			}
 			
 			
 			player = new Player(this, m_vitamioView, mHandler);
@@ -565,13 +575,13 @@ public class PlayerActivity extends Activity {
 		
 		if( buttonState == NONE_BOTH || m_vitamioView.isInPlaybackState() == false )
 		{
-			controller.hide();
+			vitamio_controller.hide();
 			m_txtState.setVisibility(View.GONE);
 			previousClick = 0;
 			return;
 		}
 		
-		controller.show(8000);
+		vitamio_controller.show(8000);
 		
 		if( previousClick == 0 )
 			previousClick = System.currentTimeMillis() - 4 * 1000;		
@@ -1040,8 +1050,8 @@ public class PlayerActivity extends Activity {
 	}
 
 	private void showInfoPanel() {
-		if( controller != null )
-			controller.hide();
+		if( vitamio_controller != null )
+			vitamio_controller.hide();
 		if (infoPanel.getVisibility() != View.VISIBLE) {
 			// animate info panel
 			infoPanel.startAnimation(inFromBottomAnimation());
