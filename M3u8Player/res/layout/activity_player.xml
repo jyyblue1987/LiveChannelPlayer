@@ -10,13 +10,13 @@
         android:id="@+id/vitamio_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center" 
-        android:visibility="gone"
+        android:layout_gravity="center"
         />
      <tv.danmaku.ijk.media.widget.VideoView
         android:id="@+id/ijk_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:visibility="gone"
         android:layout_gravity="center" />
         
 	<Button

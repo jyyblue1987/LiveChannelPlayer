@@ -3,16 +3,16 @@ package com.m3u8.player;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IMediaPlayer.OnErrorListener;
-import tv.danmaku.ijk.media.player.IMediaPlayer.OnPreparedListener;
-import tv.danmaku.ijk.media.widget.MediaController;
-import tv.danmaku.ijk.media.widget.VideoView;
-//import io.vov.vitamio.MediaPlayer;
-//import io.vov.vitamio.MediaPlayer.OnErrorListener;
-//import io.vov.vitamio.MediaPlayer.OnPreparedListener;
-//import io.vov.vitamio.widget.MediaController;
-//import io.vov.vitamio.widget.VideoView;
+//import tv.danmaku.ijk.media.player.IMediaPlayer;
+//import tv.danmaku.ijk.media.player.IMediaPlayer.OnErrorListener;
+//import tv.danmaku.ijk.media.player.IMediaPlayer.OnPreparedListener;
+//import tv.danmaku.ijk.media.widget.MediaController;
+//import tv.danmaku.ijk.media.widget.VideoView;
+import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.MediaPlayer.OnErrorListener;
+import io.vov.vitamio.MediaPlayer.OnPreparedListener;
+import io.vov.vitamio.widget.MediaController;
+import io.vov.vitamio.widget.VideoView;
 
 public class Player {
 	
@@ -56,7 +56,7 @@ public class Player {
 		view.setOnPreparedListener(new OnPreparedListener() {
 			
 			@Override
-			public void onPrepared(IMediaPlayer mp) {
+			public void onPrepared(MediaPlayer mp) {
 				Log.i(TAG, "Playback started !!!");
 				mHandler.obtainMessage(PlayerActivity.VIDEO_STARTED).sendToTarget();
 				mHandler.removeCallbacks(reconnect);
@@ -66,7 +66,7 @@ public class Player {
 		view.setOnErrorListener(new OnErrorListener() {
 			
 			@Override
-			public boolean onError(IMediaPlayer mp, int what, int extra) {
+			public boolean onError(MediaPlayer mp, int what, int extra) {
 				Log.i(TAG, "Error on stream, reconnect in 3 seconds !!!");
 				mHandler.removeCallbacks(reconnect);
 				mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
