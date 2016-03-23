@@ -100,7 +100,7 @@ public class PlayerActivity extends Activity {
 
 	int selectedCategory = 0;
 	
-	VideoView m_VideoView;
+	io.vov.vitamio.widget.VideoView m_vitamioView;
 
 	String M3Uurl;
 	String thumbnailUrlPrefix = "http://logo.albiptv.ch/";
@@ -156,7 +156,7 @@ public class PlayerActivity extends Activity {
 				}
 				if (selectedCategory == LIVE_TV_CATEGORY) {
 					if (!parent.isFinishing() && !player.isPlaying() && !StandbyActivity.SHOWING) {
-						playLastKnownChannel();
+//						playLastKnownChannel();
 					}
 				}
 				break;
@@ -366,21 +366,21 @@ public class PlayerActivity extends Activity {
 			}
 //			parseM3u8List();
 //			SurfaceView view = (SurfaceView) findViewById(R.id.surface);
-			m_VideoView = (VideoView) findViewById(R.id.video_view);
-			m_VideoView.setHardwareDecoder(true);
+			m_vitamioView = (VideoView) findViewById(R.id.vitamio_view);
+			m_vitamioView.setHardwareDecoder(true);
 			
-			m_VideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);
+			m_vitamioView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);
 			
 			if( selectedCategory != LIVE_TV_CATEGORY )
 			{
 				controller = new MediaController(parent);				
-				m_VideoView.setMediaController(controller);	
+				m_vitamioView.setMediaController(controller);	
 			}
 			else 
 				controller = null;
 			
 			
-			player = new Player(this, m_VideoView, mHandler);
+			player = new Player(this, m_vitamioView, mHandler);
 			infoPanel = findViewById(R.id.info_panel);
 			errorPanel = findViewById(R.id.error_panel);
 			jumpToChannelView = findViewById(R.id.jump_to_chanel_panel);
@@ -563,7 +563,7 @@ public class PlayerActivity extends Activity {
 		if( selectedCategory == LIVE_TV_CATEGORY )
 			return;
 		
-		if( buttonState == NONE_BOTH || m_VideoView.isInPlaybackState() == false )
+		if( buttonState == NONE_BOTH || m_vitamioView.isInPlaybackState() == false )
 		{
 			controller.hide();
 			m_txtState.setVisibility(View.GONE);
@@ -582,7 +582,7 @@ public class PlayerActivity extends Activity {
 		long gap = current - previousClick;
 		previousClick = current;
 		
-		long currentPos = m_VideoView.getCurrentPosition();
+		long currentPos = m_vitamioView.getCurrentPosition();
 		
 		if( buttonState == BACKRWARD_DOWN )
 		{
@@ -595,10 +595,10 @@ public class PlayerActivity extends Activity {
 			currentPos += gap * 8;
 		}
 		
-		if( currentPos < 0 || currentPos > m_VideoView.getDuration() )
+		if( currentPos < 0 || currentPos > m_vitamioView.getDuration() )
 			currentPos = 0;
 		
-		m_VideoView.seekTo(currentPos);
+		m_vitamioView.seekTo(currentPos);
 	}	
 	
 	private boolean handleKeyEvent(int keyCode, KeyEvent event) {

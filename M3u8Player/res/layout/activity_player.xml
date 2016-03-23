@@ -7,11 +7,17 @@
 
     
      <io.vov.vitamio.widget.VideoView
-        android:id="@+id/video_view"
+        android:id="@+id/vitamio_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center" 
+        android:visibility="gone"
         />
+     <tv.danmaku.ijk.media.widget.VideoView
+        android:id="@+id/ijk_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center" />
         
 	<Button
 	    android:id="@+id/btn_prev_down"
