@@ -56,7 +56,7 @@ import android.widget.TextView;
 
 
 public class PlayerActivity extends Activity {
-
+	
 	static final String TAG = "PlayerActivity";
 
 	static final int MIN_DISTANCE = 150;
@@ -128,6 +128,8 @@ public class PlayerActivity extends Activity {
 	private static Timer mTimer;
 	private static UpdateDurationTask mDurationTask;
 
+	private int m_nPlayerView = 0;
+	
     private class UpdateDurationTask extends TimerTask {
 
         @Override
@@ -374,8 +376,6 @@ public class PlayerActivity extends Activity {
 			m_ijkView = (tv.danmaku.ijk.media.widget.VideoView) findViewById(R.id.ijk_view);
 			m_ijkView.setVideoLayout(tv.danmaku.ijk.media.widget.VideoView.VIDEO_LAYOUT_STRETCH);
 			
-			m_ijkView.setVisibility(View.GONE);
-			
 			if( selectedCategory != LIVE_TV_CATEGORY )
 			{
 				vitamio_controller = new io.vov.vitamio.widget.MediaController(parent);				
@@ -391,7 +391,12 @@ public class PlayerActivity extends Activity {
 			}
 			
 			
-			player = new Player(this, m_vitamioView, mHandler);
+			player = new Player(this, m_ijkView, mHandler);
+			if( player.getPlayerView() == 0 )			
+				m_ijkView.setVisibility(View.GONE);
+			else
+				m_vitamioView.setVisibility(View.GONE);
+			
 			infoPanel = findViewById(R.id.info_panel);
 			errorPanel = findViewById(R.id.error_panel);
 			jumpToChannelView = findViewById(R.id.jump_to_chanel_panel);
@@ -574,15 +579,29 @@ public class PlayerActivity extends Activity {
 		if( selectedCategory == LIVE_TV_CATEGORY )
 			return;
 		
-		if( buttonState == NONE_BOTH || m_vitamioView.isInPlaybackState() == false )
+		boolean state = false;
+		
+		if( player.getPlayerView() == 0 )
+			state = m_vitamioView.isInPlaybackState();
+		else
+			state = m_ijkView.isInPlaybackState();
+	
+		if( buttonState == NONE_BOTH || state == false )
 		{
-			vitamio_controller.hide();
+			if( player.getPlayerView() == 0 )
+				vitamio_controller.hide();
+			else
+				ijk_controller.hide();
+			
 			m_txtState.setVisibility(View.GONE);
 			previousClick = 0;
 			return;
 		}
 		
-		vitamio_controller.show(8000);
+		if( player.getPlayerView() == 0 )
+			vitamio_controller.show(8000);
+		else
+			ijk_controller.show(8000);
 		
 		if( previousClick == 0 )
 			previousClick = System.currentTimeMillis() - 4 * 1000;		
@@ -593,7 +612,12 @@ public class PlayerActivity extends Activity {
 		long gap = current - previousClick;
 		previousClick = current;
 		
-		long currentPos = m_vitamioView.getCurrentPosition();
+		long currentPos = 0;
+		
+		if( player.getPlayerView() == 0 )
+			currentPos = m_vitamioView.getCurrentPosition();
+		else
+			currentPos = m_ijkView.getCurrentPosition();
 		
 		if( buttonState == BACKRWARD_DOWN )
 		{
@@ -606,10 +630,19 @@ public class PlayerActivity extends Activity {
 			currentPos += gap * 8;
 		}
 		
-		if( currentPos < 0 || currentPos > m_vitamioView.getDuration() )
+		long duration = 0;
+		if( player.getPlayerView() == 0 )
+			duration = m_vitamioView.getDuration();
+		else
+			duration = m_ijkView.getDuration();
+		
+		if( currentPos < 0 || currentPos > duration )
 			currentPos = 0;
 		
-		m_vitamioView.seekTo(currentPos);
+		if( player.getPlayerView() == 0 )
+			m_vitamioView.seekTo(currentPos);
+		else
+			m_ijkView.seekTo(currentPos);
 	}	
 	
 	private boolean handleKeyEvent(int keyCode, KeyEvent event) {
@@ -1051,8 +1084,16 @@ public class PlayerActivity extends Activity {
 	}
 
 	private void showInfoPanel() {
-		if( vitamio_controller != null )
-			vitamio_controller.hide();
+		if( player.getPlayerView() == 0 )
+		{
+			if( vitamio_controller != null )
+				vitamio_controller.hide();
+		}
+		else
+		{
+			if( ijk_controller != null )
+				ijk_controller.hide();
+		}
 		if (infoPanel.getVisibility() != View.VISIBLE) {
 			// animate info panel
 			infoPanel.startAnimation(inFromBottomAnimation());
