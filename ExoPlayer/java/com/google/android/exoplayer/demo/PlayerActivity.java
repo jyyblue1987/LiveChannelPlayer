@@ -202,9 +202,9 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     contentType = intent.getIntExtra(CONTENT_TYPE_EXTRA,
         inferContentType(contentUri, intent.getStringExtra(CONTENT_EXT_EXTRA)));
     contentUri = Uri.parse("http://live.albiptv.ch:7798/live/test/securityTest/11.ts");
-    contentUri = Uri.parse("http://live.albiptv.ch:7798/live/test/securityTest/19.ts");
-    contentUri = Uri.parse("http://live.albiptv.ch:7798/movie/test/securityTest/753.mkv");
-    contentUri = Uri.parse("http://live.albiptv.ch:7798/movie/test/securityTest/687.mp4");   
+//    contentUri = Uri.parse("http://live.albiptv.ch:7798/live/test/securityTest/19.ts");
+//    contentUri = Uri.parse("http://live.albiptv.ch:7798/movie/test/securityTest/753.mkv");
+//    contentUri = Uri.parse("http://live.albiptv.ch:7798/movie/test/securityTest/687.mp4");   
     
     
     contentId = intent.getStringExtra(CONTENT_ID_EXTRA);
