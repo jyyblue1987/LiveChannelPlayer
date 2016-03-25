@@ -13,6 +13,7 @@ public class NetworkStateChangeReceiver extends BroadcastReceiver {
 	public static final String TAG = "NetworkStateChangeReceiver";
 	
 	private static boolean firstConnection = true;
+	public static boolean networkConnected = true;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -20,6 +21,7 @@ public class NetworkStateChangeReceiver extends BroadcastReceiver {
 		if (intent.getExtras() != null) {
 			NetworkInfo ni = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
 			if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
+				networkConnected = true;
 				if (Helper.isActivityActive("com.m3u8.player", context)) {
 					Log.i(TAG, "Network " + ni.getTypeName() + " connected");
 //					Intent i = new Intent(context, PlayerActivity.class);
@@ -38,6 +40,7 @@ public class NetworkStateChangeReceiver extends BroadcastReceiver {
 				}
 			} else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
 				Log.d(TAG, "There's no network connectivity");
+				networkConnected = false;
 			}
 		}
 	}

@@ -18,9 +18,10 @@ public class Player {
 	int volume = 50;
 	
 	int m_nPlayView = 0;
+	boolean playStart = false;
 	
-	io.vov.vitamio.widget.MediaController vitamio_controller = null;
-	io.vov.vitamio.widget.VideoView vitamio_view;
+//	io.vov.vitamio.widget.MediaController vitamio_controller = null;
+//	io.vov.vitamio.widget.VideoView vitamio_view;
 	
 	tv.danmaku.ijk.media.widget.MediaController ijk_controller = null;
 	tv.danmaku.ijk.media.widget.VideoView ijk_view;
@@ -34,17 +35,17 @@ public class Player {
 	
 	public void showMediaController()
 	{
-		if( m_nPlayView == 0 )
-			vitamio_controller.show();
-		else
+//		if( m_nPlayView == 0 )
+//			vitamio_controller.show();
+//		else
 			ijk_controller.show();
 	}
 	
 	public void hideMediaController()
 	{
-		if( m_nPlayView == 0 )
-			vitamio_controller.hide();
-		else
+//		if( m_nPlayView == 0 )
+//			vitamio_controller.hide();
+//		else
 			ijk_controller.hide();
 	}
 	
@@ -53,36 +54,36 @@ public class Player {
 		return m_nPlayView;
 	}
 	
-	public Player(PlayerActivity parent, io.vov.vitamio.widget.VideoView view, final Handler mHandler) {
-		this.parent = parent;
-		this.vitamio_view = view;
-		this.mHandler = mHandler;
-		
-		m_nPlayView = 0;
-		
-		view.setOnPreparedListener(new io.vov.vitamio.MediaPlayer.OnPreparedListener() {
-			
-			@Override
-			public void onPrepared(io.vov.vitamio.MediaPlayer mp) {
-				Log.i(TAG, "Playback started !!!");
-				mHandler.obtainMessage(PlayerActivity.VIDEO_STARTED).sendToTarget();
-				mHandler.removeCallbacks(reconnect);
-			}
-		});
-		
-		view.setOnErrorListener(new io.vov.vitamio.MediaPlayer.OnErrorListener() {
-			
-			@Override
-			public boolean onError(io.vov.vitamio.MediaPlayer mp, int what, int extra) {
-				Log.i(TAG, "Error on stream, reconnect in 3 seconds !!!");
-				mHandler.removeCallbacks(reconnect);
-				mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
-				mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();				
-				return true;
-			}
-		});
-
-	}
+//	public Player(PlayerActivity parent, io.vov.vitamio.widget.VideoView view, final Handler mHandler) {
+//		this.parent = parent;
+//		this.vitamio_view = view;
+//		this.mHandler = mHandler;
+//		
+//		m_nPlayView = 0;
+//		
+//		view.setOnPreparedListener(new io.vov.vitamio.MediaPlayer.OnPreparedListener() {
+//			
+//			@Override
+//			public void onPrepared(io.vov.vitamio.MediaPlayer mp) {
+//				Log.i(TAG, "Playback started !!!");
+//				mHandler.obtainMessage(PlayerActivity.VIDEO_STARTED).sendToTarget();
+//				mHandler.removeCallbacks(reconnect);
+//			}
+//		});
+//		
+//		view.setOnErrorListener(new io.vov.vitamio.MediaPlayer.OnErrorListener() {
+//			
+//			@Override
+//			public boolean onError(io.vov.vitamio.MediaPlayer mp, int what, int extra) {
+//				Log.i(TAG, "Error on stream, reconnect in 3 seconds !!!");
+//				mHandler.removeCallbacks(reconnect);
+//				mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
+//				mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();				
+//				return true;
+//			}
+//		});
+//
+//	}
 	
 	public Player(PlayerActivity parent, tv.danmaku.ijk.media.widget.VideoView view, final Handler mHandler) {
 		this.parent = parent;
@@ -94,6 +95,7 @@ public class Player {
 			
 			@Override
 			public void onPrepared(tv.danmaku.ijk.media.player.IMediaPlayer mp) {
+				playStart = true;
 				Log.i(TAG, "Playback started !!!");
 				mHandler.obtainMessage(PlayerActivity.VIDEO_STARTED).sendToTarget();
 				mHandler.removeCallbacks(reconnect);
@@ -104,20 +106,29 @@ public class Player {
 			
 			@Override
 			public boolean onError(tv.danmaku.ijk.media.player.IMediaPlayer mp, int what, int extra) {
-				Log.i(TAG, "Error on stream, reconnect in 3 seconds !!!");
-				mHandler.removeCallbacks(reconnect);
-				mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
-				mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();		
+				playStart = true;
+				
+				onErrorStream();	
 				return true;
 			}
 		});
 		
 	}
 	
+	public void onErrorStream()
+	{
+		if( playStart == false )
+			return;
+		
+		Log.i(TAG, "Error on stream, reconnect in 3 seconds !!!");
+		mHandler.removeCallbacks(reconnect);
+		mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
+		mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();	
+	}
 	public boolean isPlaying() {
-		if( m_nPlayView == 0 )
-			return vitamio_view.isPlaying();
-		else
+//		if( m_nPlayView == 0 )
+//			return vitamio_view.isPlaying();
+//		else
 			return ijk_view.isPlaying();
 	}
 	
@@ -131,24 +142,24 @@ public class Player {
 	}
 	
 	public void play(String url) {
-		if( m_nPlayView == 0 )
-			vitamio_view.stopPlayback();	
-		else
+//		if( m_nPlayView == 0 )
+//			vitamio_view.stopPlayback();	
+//		else
 			ijk_view.stopPlayback();
 		
 		Log.w(TAG, "Playing : " + url);
 		try {
-			if( m_nPlayView == 0 )
-			{
-				vitamio_view.setVideoPath(url);
-				vitamio_view.requestFocus();
-				vitamio_view.start();	
-			}
-			else
+//			if( m_nPlayView == 0 )
+//			{
+//				vitamio_view.setVideoPath(url);
+//				vitamio_view.requestFocus();
+//				vitamio_view.start();	
+//			}
+//			else
 			{
 				ijk_view.setVideoPath(url);
 				ijk_view.requestFocus();
-				ijk_view.start();	
+				
 			}
 			
 			
@@ -159,13 +170,13 @@ public class Player {
 	}
 	
 	public void stop() {
-		if( m_nPlayView == 0 )
-		{
-			if (vitamio_view != null && vitamio_view.isPlaying()) {
-				vitamio_view.stopPlayback();
-			}	
-		}
-		else
+//		if( m_nPlayView == 0 )
+//		{
+//			if (vitamio_view != null && vitamio_view.isPlaying()) {
+//				vitamio_view.stopPlayback();
+//			}	
+//		}
+//		else
 		{
 			if (ijk_view != null && ijk_view.isPlaying()) {
 				ijk_view.stopPlayback();

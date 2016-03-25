@@ -99,7 +99,7 @@ public class PlayerActivity extends Activity {
 
 	int selectedCategory = 0;
 	
-	io.vov.vitamio.widget.VideoView m_vitamioView;
+//	io.vov.vitamio.widget.VideoView m_vitamioView;
 	tv.danmaku.ijk.media.widget.VideoView m_ijkView;
 
 	String M3Uurl;
@@ -180,7 +180,7 @@ public class PlayerActivity extends Activity {
 				break;
 
 			case PLAYER_ERROR:
-				showErrorPanel(getResources().getString(R.string.stream_error));
+//				showErrorPanel(getResources().getString(R.string.stream_error));
 				Log.i(TAG, getResources().getString(R.string.stream_error));
 				break;
 
@@ -294,6 +294,8 @@ public class PlayerActivity extends Activity {
 			return false;
 		}
 	};
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -345,7 +347,7 @@ public class PlayerActivity extends Activity {
 		m_txtState = (TextView)findViewById(R.id.txt_state);
 	}
 
-	io.vov.vitamio.widget.MediaController vitamio_controller = null;
+//	io.vov.vitamio.widget.MediaController vitamio_controller = null;
 	tv.danmaku.ijk.media.widget.MediaController ijk_controller = null;
 	
 	@Override
@@ -369,26 +371,26 @@ public class PlayerActivity extends Activity {
 			}
 //			parseM3u8List();
 //			SurfaceView view = (SurfaceView) findViewById(R.id.surface);
-			m_vitamioView = (io.vov.vitamio.widget.VideoView) findViewById(R.id.vitamio_view);
-			m_vitamioView.setHardwareDecoder(true);			
-			m_vitamioView.setVideoLayout(io.vov.vitamio.widget.VideoView.VIDEO_LAYOUT_STRETCH, 0);
+//			m_vitamioView = (io.vov.vitamio.widget.VideoView) findViewById(R.id.vitamio_view);
+//			m_vitamioView.setHardwareDecoder(true);			
+//			m_vitamioView.setVideoLayout(io.vov.vitamio.widget.VideoView.VIDEO_LAYOUT_STRETCH, 0);
 			
 			m_ijkView = (tv.danmaku.ijk.media.widget.VideoView) findViewById(R.id.ijk_view);
 			m_ijkView.setVideoLayout(tv.danmaku.ijk.media.widget.VideoView.VIDEO_LAYOUT_STRETCH);
 			
-			if( selectedCategory != LIVE_TV_CATEGORY )
+//			if( selectedCategory != LIVE_TV_CATEGORY )
 			{
-				vitamio_controller = new io.vov.vitamio.widget.MediaController(parent);				
-				m_vitamioView.setMediaController(vitamio_controller);	
+//				vitamio_controller = new io.vov.vitamio.widget.MediaController(parent);				
+//				m_vitamioView.setMediaController(vitamio_controller);	
 				
 				ijk_controller = new tv.danmaku.ijk.media.widget.MediaController(parent);				
 				m_ijkView.setMediaController(ijk_controller);	
 			}
-			else 
-			{
-				vitamio_controller = null;
-				ijk_controller = null;
-			}
+//			else 
+//			{
+////				vitamio_controller = null;
+//				ijk_controller = null;
+//			}
 			
 			player = new Player(this, m_ijkView, mHandler);
 			
@@ -434,6 +436,8 @@ public class PlayerActivity extends Activity {
 			ImageLoader.getInstance().init(config);
 			iLoader = ImageLoader.getInstance();
 			activityCreated = true;
+			
+			
 		}
 	}
 	
@@ -572,23 +576,30 @@ public class PlayerActivity extends Activity {
 	private void  updateDurationTask()
 	{
 		if( selectedCategory == LIVE_TV_CATEGORY )
+		{
+			if( m_ijkView != null && NetworkStateChangeReceiver.networkConnected == false )
+			{
+				if( player != null )
+					player.onErrorStream();
+			}
 			return;
+		}
 		
 		boolean state = false;
 		
 		if( player == null )
 			return;
 		
-		if( player.getPlayerView() == 0 )
-			state = m_vitamioView.isInPlaybackState();
-		else
+//		if( player.getPlayerView() == 0 )
+//			state = m_vitamioView.isInPlaybackState();
+//		else
 			state = m_ijkView.isInPlaybackState();
 	
 		if( buttonState == NONE_BOTH || state == false )
 		{
-			if( player.getPlayerView() == 0 )
-				vitamio_controller.hide();
-			else
+//			if( player.getPlayerView() == 0 )
+//				vitamio_controller.hide();
+//			else
 				ijk_controller.hide();
 			
 			m_txtState.setVisibility(View.GONE);
@@ -596,9 +607,9 @@ public class PlayerActivity extends Activity {
 			return;
 		}
 		
-		if( player.getPlayerView() == 0 )
-			vitamio_controller.show(10000);
-		else
+//		if( player.getPlayerView() == 0 )
+//			vitamio_controller.show(10000);
+//		else
 			ijk_controller.show(1000);
 		
 		if( previousClick == 0 )
@@ -612,9 +623,9 @@ public class PlayerActivity extends Activity {
 		
 		long currentPos = 0;
 		
-		if( player.getPlayerView() == 0 )
-			currentPos = m_vitamioView.getCurrentPosition();
-		else
+//		if( player.getPlayerView() == 0 )
+//			currentPos = m_vitamioView.getCurrentPosition();
+//		else
 			currentPos = m_ijkView.getCurrentPosition();
 		
 		if( buttonState == BACKRWARD_DOWN )
@@ -629,17 +640,17 @@ public class PlayerActivity extends Activity {
 		}
 		
 		long duration = 0;
-		if( player.getPlayerView() == 0 )
-			duration = m_vitamioView.getDuration();
-		else
+//		if( player.getPlayerView() == 0 )
+//			duration = m_vitamioView.getDuration();
+//		else
 			duration = m_ijkView.getDuration();
 		
 		if( currentPos < 0 || currentPos > duration )
 			currentPos = 0;
 		
-		if( player.getPlayerView() == 0 )
-			m_vitamioView.seekTo(currentPos);
-		else
+//		if( player.getPlayerView() == 0 )
+//			m_vitamioView.seekTo(currentPos);
+//		else
 			m_ijkView.seekTo(currentPos);
 	}	
 	
@@ -1082,12 +1093,12 @@ public class PlayerActivity extends Activity {
 	}
 
 	private void showInfoPanel() {
-		if( player.getPlayerView() == 0 )
-		{
-			if( vitamio_controller != null )
-				vitamio_controller.hide();
-		}
-		else
+//		if( player.getPlayerView() == 0 )
+//		{
+//			if( vitamio_controller != null )
+//				vitamio_controller.hide();
+//		}
+//		else
 		{
 			if( ijk_controller != null )
 				ijk_controller.hide();
