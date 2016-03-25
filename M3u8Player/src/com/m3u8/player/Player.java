@@ -78,7 +78,7 @@ public class Player {
 				mHandler.removeCallbacks(reconnect);
 				mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
 				mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();				
-				return false;
+				return true;
 			}
 		});
 
@@ -108,7 +108,7 @@ public class Player {
 				mHandler.removeCallbacks(reconnect);
 				mHandler.postDelayed(reconnect, RECONNECT_TIMEOUT);
 				mHandler.obtainMessage(PlayerActivity.PLAYER_ERROR).sendToTarget();		
-				return false;
+				return true;
 			}
 		});
 		

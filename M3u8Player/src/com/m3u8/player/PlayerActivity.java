@@ -1297,21 +1297,21 @@ public class PlayerActivity extends Activity {
 		
 		String url = element.getUrl();
 		
-		if( selectedCategory != LIVE_TV_CATEGORY && url.endsWith("mkv") )
-			player = new Player(this, m_vitamioView, mHandler);
-		else
-			player = new Player(this, m_ijkView, mHandler);
-		
-		if( player.getPlayerView() == 0 )			
-		{
-			m_ijkView.setVisibility(View.GONE);
-			m_vitamioView.setVisibility(View.VISIBLE);
-		}
-		else
-		{
-			m_vitamioView.setVisibility(View.GONE);
-			m_ijkView.setVisibility(View.VISIBLE);				
-		}
+////		if( selectedCategory != LIVE_TV_CATEGORY && url.endsWith("mkv") )
+////			player = new Player(this, m_vitamioView, mHandler);
+////		else
+//			player = new Player(this, m_ijkView, mHandler);
+//		
+//		if( player.getPlayerView() == 0 )			
+//		{
+//			m_ijkView.setVisibility(View.GONE);
+//			m_vitamioView.setVisibility(View.VISIBLE);
+//		}
+//		else
+//		{
+//			m_vitamioView.setVisibility(View.GONE);
+//			m_ijkView.setVisibility(View.VISIBLE);				
+//		}
 		
 		
 		player.play(url);
