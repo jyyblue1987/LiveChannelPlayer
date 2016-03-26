@@ -158,7 +158,7 @@ public class PlayerActivity extends Activity {
 				}
 				if (selectedCategory == LIVE_TV_CATEGORY) {					
 					if ( player != null && !parent.isFinishing() && !player.isPlaying() && !StandbyActivity.SHOWING) {
-//						playLastKnownChannel();
+						playLastKnownChannel();
 					}
 				}
 				break;
@@ -1489,7 +1489,6 @@ public class PlayerActivity extends Activity {
 			String thumbnailUrl = "http://logo.albiptv.ch/" + logoName;
 			// tDownloader.requestloadImage(thumbnailUrl, logo);
 			iLoader.displayImage(thumbnailUrl, logo, defaultImageOptions);
-//			if( position == m_nSelectChannel )
 			if( position == m_nSelectChannel  )
 				elementView.findViewById(R.id.lay_root).setBackgroundResource(R.drawable.playlist_selected);
 			else
