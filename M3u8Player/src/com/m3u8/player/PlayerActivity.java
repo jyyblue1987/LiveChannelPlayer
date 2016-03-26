@@ -128,7 +128,7 @@ public class PlayerActivity extends Activity {
 	private static Timer mTimer;
 	private static UpdateDurationTask mDurationTask;
 
-	private int m_nPlayerView = 0;
+	private int		m_nSelectChannel = 0; 
 	
     private class UpdateDurationTask extends TimerTask {
 
@@ -313,7 +313,8 @@ public class PlayerActivity extends Activity {
 			public void onClick(View v) {
 //				buttonState = BACKRWARD_DOWN;	
 //				updateDurationTask();
-				showGridView();
+//				showGridView();
+				playNextChannelFromList();
 			}
 		});
 		
@@ -1016,6 +1017,7 @@ public class PlayerActivity extends Activity {
 			chView = channelList;
 		}
 		int currentPosition = chView.getSelectedItemPosition();
+		currentPosition = m_nSelectChannel;
 		if ((currentPosition + 1) > (chView.getAdapter().getCount() - 1)) {
 			currentPosition = 0;
 		} else {
@@ -1034,7 +1036,9 @@ public class PlayerActivity extends Activity {
 		} else {
 			chView = channelList;
 		}
+		
 		int currentPosition = chView.getSelectedItemPosition();
+		currentPosition = m_nSelectChannel;
 		if ((currentPosition - 1) < 0) {
 			currentPosition = chView.getAdapter().getCount() - 1;
 		} else {
@@ -1212,13 +1216,6 @@ public class PlayerActivity extends Activity {
 	private void displayChannelsInGridView() {
 		if (m3uList != null) {
 			Log.i(TAG, "Displaying channels in grid !!!");
-			MyGridAdapter adapter = new MyGridAdapter(this, m3uList);
-			channelGrid = (GridView) findViewById(R.id.channel_gridview);
-			channelGrid.setAdapter(adapter);
-			channelGrid.setOnItemClickListener(channelClickListener);
-			channelGrid.setOnTouchListener(channelListTouchListener);
-			channelGrid.setOnKeyListener(channelComponentKeyListener);
-			
 			SharedPreferences pref = getSharedPreferences(TAG, MODE_PRIVATE);
 			String lastKnownChannelName = pref.getString(SHARED_PREFFERENCE_CHANNEL_NAME_KEY, "");
 			
@@ -1236,12 +1233,22 @@ public class PlayerActivity extends Activity {
 				}
 			}
 			
+			m_nSelectChannel = lastKnownChannelPosition;
+			
+			MyGridAdapter adapter = new MyGridAdapter(this, m3uList);
+			channelGrid = (GridView) findViewById(R.id.channel_gridview);
+			channelGrid.setAdapter(adapter);
+			channelGrid.setOnItemClickListener(channelClickListener);
+			channelGrid.setOnTouchListener(channelListTouchListener);
+			channelGrid.setOnKeyListener(channelComponentKeyListener);			
+			
 			channelGrid.setSelection(lastKnownChannelPosition);
 			
 			android.view.ViewGroup.LayoutParams lp = channelGrid.getLayoutParams();
 			Display display = getWindowManager().getDefaultDisplay();
 			lp.width = display.getWidth() / 10 * 8;
 			lp.height = display.getHeight() / 10 * 8;
+			channelGrid.setColumnWidth(lp.width / 3 - 10);
 			channelGrid.setLayoutParams(lp);
 			channelGrid.invalidate();
 			if (player != null && !player.isPlaying()) {
@@ -1296,6 +1303,10 @@ public class PlayerActivity extends Activity {
 			
 			editor.commit();
 //		}
+		
+			m_nSelectChannel = position;
+		channelGrid.setSelection(position);
+			
 		ImageView playingChannelLogo = (ImageView) findViewById(R.id.playing_channel_logo);
 		TextView playingChannelName = (TextView) findViewById(R.id.playing_channel_label);
 		String logoName = element.getName().toLowerCase().replace(" ", "_") + ".png";
@@ -1478,6 +1489,13 @@ public class PlayerActivity extends Activity {
 			String thumbnailUrl = "http://logo.albiptv.ch/" + logoName;
 			// tDownloader.requestloadImage(thumbnailUrl, logo);
 			iLoader.displayImage(thumbnailUrl, logo, defaultImageOptions);
+//			if( position == m_nSelectChannel )
+			if( position == m_nSelectChannel  )
+				elementView.findViewById(R.id.lay_root).setBackgroundResource(R.drawable.playlist_selected);
+			else
+				elementView.findViewById(R.id.lay_root).setBackgroundResource(R.drawable.playlist_normal);
+				
+				
 			return elementView;
 		}
 
