@@ -46,8 +46,10 @@ public class Helper {
 	public static String getM3UListUrl(Context c) {
 		SharedPreferences pref = c.getSharedPreferences("com.m3u8.player", Context.MODE_PRIVATE);
 		// TODO set default value to emty string when done debugging
+//		return pref.getString(M3ULIST_KEY,
+//				"http://89.163.146.163:7798/get.php?username=test&password=securityTest&type=m3u");
 		return pref.getString(M3ULIST_KEY,
-				"http://89.163.146.163:7798/get.php?username=test&password=securityTest&type=m3u");
+				"http://live.albiptv.ch:7798/get.php?username=test&password=securityTest&type=m3u&output=hls");
 		// return "http://192.168.1.4:9090/test.m3u";
 	}
 
