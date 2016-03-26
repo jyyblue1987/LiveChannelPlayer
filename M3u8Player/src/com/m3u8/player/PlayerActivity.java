@@ -67,8 +67,6 @@ public class PlayerActivity extends Activity {
 	public static final int VOD_TV_CATEGORY2 = 3;
 	public static final int VOD_TV_CATEGORY3 = 4;
 	
-	
-	
 	public static final int DISPLAY_CHANNEL_LIST = 1;
 	public static final int LIST_READY = 2;
 	public static final int SURFACE_LAYOUT = 3;
