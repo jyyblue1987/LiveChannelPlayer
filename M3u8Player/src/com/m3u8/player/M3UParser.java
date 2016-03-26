@@ -209,6 +209,8 @@ public class M3UParser extends Thread {
 		public void strip() {
 			name = name.replace("MOV Gjermanisht", "");
 			name = name.replace("MOV Shqip", "");
+			name = name.replace("MOV Kids", "");
+			name = name.replace("Radio ", "");
 			name = name.trim();
 		}
 	}

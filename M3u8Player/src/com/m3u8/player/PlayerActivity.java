@@ -377,7 +377,7 @@ public class PlayerActivity extends Activity {
 			m_ijkView = (tv.danmaku.ijk.media.widget.VideoView) findViewById(R.id.ijk_view);
 			m_ijkView.setVideoLayout(tv.danmaku.ijk.media.widget.VideoView.VIDEO_LAYOUT_STRETCH);
 			
-//			if( selectedCategory != LIVE_TV_CATEGORY )
+			if( selectedCategory != LIVE_TV_CATEGORY )
 			{
 //				vitamio_controller = new io.vov.vitamio.widget.MediaController(parent);				
 //				m_vitamioView.setMediaController(vitamio_controller);	

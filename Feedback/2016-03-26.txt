@@ -1,0 +1,7 @@
+[8:25:00 PM] Quickstreamingmedia @StreamingHelp: Tell me
+[8:25:46 PM] Quickstreamingmedia @StreamingHelp: Tested i am tired from this. found those things they was not ok:
+Navigation bar its displayed again on live tv. 
+Navigating through playlist the highlighted channel not moving so we dont know where we are. 
+Film kids category there is displayed whole movie name Like Mov Kids then movie name, it should be displayed only movie name without mov kids.. Like other categories. 
+To live tv playlist looks good but it will be better if you add one more channel in row, on every row from left to the right now are displayed 3 channel, make it please 4 channels to be displayed.
+And playlist from movies make it like it was with big icon so we can see movies icons, something bigger icons please.
