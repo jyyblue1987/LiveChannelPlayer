@@ -22,9 +22,9 @@
 	<Button
 	    android:id="@+id/btn_prev_down"
 	    android:layout_width="100dip"
-	    android:layout_height="50dip"	    
+	    android:layout_height="50dip"	   
+	    android:visibility="gone" 
 	    android:text="PlayList"
-	    android:visibility="gone"
 	    />
 	<Button
 	    android:id="@+id/btn_prev_up"
@@ -47,8 +47,8 @@
 	    android:layout_width="100dip"
 	    android:layout_height="50dip"	    
 	    android:layout_below="@id/btn_next_down"
-	    android:visibility="gone"
 	    android:text="Next Down" 
+	    android:visibility="gone"
 	    />
 	
 	<TextView

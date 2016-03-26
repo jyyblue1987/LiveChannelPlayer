@@ -273,27 +273,49 @@ public class PlayerActivity extends Activity {
 				onBackPressed();
 				return true;
 			}
-			if (GRID_VIEW) {
-				int columns = channelGrid.getNumColumns();
-				int elements = channelGrid.getCount();
-				int currentRow = channelGrid.getSelectedItemPosition() / columns;
-				int numberOfRows = elements / columns;
-				if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-					if (currentRow == 0) {
-						return true;
-					}
-				}
-				if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-					if (currentRow == numberOfRows) {
-						return true;
-					}
-				}
-			}
+			
+			if( event.getAction() == KeyEvent.ACTION_UP )
+				return moveSelectChannel(keyCode);
+			
 			return false;
 		}
 	};
 	
-	
+	private boolean moveSelectChannel(int keyCode)
+	{
+		if (GRID_VIEW) {
+			int count = channelGrid.getCount();
+			int column = channelGrid.getNumColumns();
+			
+			int nSelectedChannel = -1;
+			if( count < 1 )
+				return false;
+			if( keyCode == KeyEvent.KEYCODE_DPAD_LEFT )
+				nSelectedChannel = (m_nSelectChannel + count - 1) % count;
+			if( keyCode == KeyEvent.KEYCODE_DPAD_RIGHT )
+				nSelectedChannel = (m_nSelectChannel + count + 1) % count;
+			if( keyCode == KeyEvent.KEYCODE_DPAD_UP )
+				nSelectedChannel = (m_nSelectChannel + count - column) % count;
+			if( keyCode == KeyEvent.KEYCODE_DPAD_DOWN )
+				nSelectedChannel = (m_nSelectChannel + count + column) % count;
+			
+			if( nSelectedChannel < 0 )
+				return false;
+			
+			m_nSelectChannel = nSelectedChannel;
+			((MyGridAdapter)channelGrid.getAdapter()).notifyDataSetChanged();
+			channelGrid.postDelayed(new Runnable() {
+			    @Override
+			    public void run() {
+			    	channelGrid.requestFocusFromTouch();
+			    	channelGrid.setSelection(m_nSelectChannel);
+			    }
+			}, 100);
+//			channelGrid.invalidate();
+			return true;
+		}			
+		return false;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -309,10 +331,7 @@ public class PlayerActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-//				buttonState = BACKRWARD_DOWN;	
-//				updateDurationTask();
-//				showGridView();
-				playNextChannelFromList();
+				moveSelectChannel(KeyEvent.KEYCODE_DPAD_LEFT);
 			}
 		});
 		
@@ -320,8 +339,7 @@ public class PlayerActivity extends Activity {
 					
 			@Override
 			public void onClick(View v) {
-				buttonState = NONE_BOTH;	
-				updateDurationTask();
+				moveSelectChannel(KeyEvent.KEYCODE_DPAD_RIGHT);
 			}
 		});
 		
@@ -329,8 +347,7 @@ public class PlayerActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				buttonState = FORWARD_DOWN;	
-				updateDurationTask();
+				moveSelectChannel(KeyEvent.KEYCODE_DPAD_UP);
 			}
 		});
 		
@@ -338,8 +355,7 @@ public class PlayerActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				buttonState = NONE_BOTH;
-				updateDurationTask();
+				moveSelectChannel(KeyEvent.KEYCODE_DPAD_DOWN);
 			}
 		});
 		
@@ -563,6 +579,7 @@ public class PlayerActivity extends Activity {
 			buttonState = NONE_BOTH;
 			updateDurationTask();
 		}
+			
 	}
 	
 	private long previousClick = 0;
