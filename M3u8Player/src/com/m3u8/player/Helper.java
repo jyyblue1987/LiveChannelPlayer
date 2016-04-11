@@ -48,8 +48,11 @@ public class Helper {
 		// TODO set default value to emty string when done debugging
 //		return pref.getString(M3ULIST_KEY,
 //				"http://89.163.146.163:7798/get.php?username=test&password=securityTest&type=m3u");
+//		return pref.getString(M3ULIST_KEY,
+//				"http://live.albiptv.ch:7798/get.php?username=test&password=securityTest&type=m3u&output=hls");
 		return pref.getString(M3ULIST_KEY,
-				"http://live.albiptv.ch:7798/get.php?username=test&password=securityTest&type=m3u&output=hls");
+				"http://158.69.227.57:8080/get.php?username=testus&password=test&type=m3u&output=mpegts");
+		
 		// return "http://192.168.1.4:9090/test.m3u";
 	}
 
